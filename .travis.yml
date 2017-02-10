@@ -11,3 +11,12 @@ install:
 script:
   - make test
   - if [[ $TRAVIS_PYTHON_VERSION == '3.6' ]]; then make test_mypy; fi
+deploy:
+  provider: pypi
+  user: lyftpypi
+  password:
+    secure: "m5DZXftZtg9ao3Zz03Q6rf4zzALlU3N6bY+xJ7vT3JUFBAWI3Ol61dN76fZFIdyrf1SYbp4psVgS+e1TZvN1RmxLwFG3BIlZwXOboZkCXwfT4j6CU0npyIVBEsd1h/seRD0diN034q2DZ6SCdpm3PEixwPRc4ffVfLXhXZBWGwCD0KmPfPWJ0nrE9gz8n1JY/FKthLpYh/nlcFHHs5/qLBoMLTBLb76sMGIbErDVoSavHasaFGNTVhwj/25slZCWkgw45rkqhdaof1yCdhZ1lHwNu1T3nCjH/8j9Zglqq7Qwn0yjvZJor5j2doR+BCaaIxN9t3P++3fIqh1sWN+TbS/Hf0bEJ27pUjrD8Lc2oTdyD61Dv7tZ0gcht8gKkagBOCarItBGOXHffiJqLmBdqcskO4KUbUm1A4X3puck4S4HJ7Rd26Rsg/Jp9HsYiyl7tUIgEkDlFmHyKJEO8gTKJEhoYcLOI1YhX0+oIfHgN8c4eCgxzvOB2S1qrfRJ6DjhD115tsGhSgC2dwyGzLJqHvUvLtFEdyRZ44TzUyyVcotqQiyARFyVZ1xEGuPMXg5zvpYOdCosVv8Oz9oWd8hswfr4m/p6/dWWglw/jZD0hcvF81RLhm25lR3zR/nQAKDVqNbYGNkSj1TDscP9q8R3N831t95rx26erwg9RcJ+VP8="
+  on:
+    tags: true
+    distributions: sdist bdist_wheel
+    repo: lyft/awspricing
