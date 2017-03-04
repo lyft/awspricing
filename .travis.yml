@@ -7,7 +7,7 @@ python:
 install:
 - pip install -e .
 - pip install -r test-requirements.txt
-- if [[ $TRAVIS_PYTHON_VERSION == '3.6' ]]; then pip install mypy; fi
+- if [[ $TRAVIS_PYTHON_VERSION == '3.6' ]]; then pip install -r mypy-requirements.txt; fi
 script:
 - make test
 - if [[ $TRAVIS_PYTHON_VERSION == '3.6' ]]; then make test_mypy; fi
