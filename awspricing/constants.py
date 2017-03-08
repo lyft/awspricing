@@ -1,3 +1,5 @@
+from typing import Dict  # noqa
+
 
 class Enum(object):
     """Very simple string enumeration implementation.

@@ -1,6 +1,6 @@
 from collections import defaultdict
 
-from typing import Any, Optional, Set, Type  # noqa
+from typing import Any, Dict, List, Optional, Set, Type  # noqa
 
 import six
 
@@ -85,8 +85,8 @@ class AWSOffer(object):
         return '|'.join(attributes)
 
     def _generate_reverse_sku_mapping(self,
-                                      *attribute_names,  # type: *str
-                                      **kwargs           # type: *Optional[str]
+                                      *attribute_names,  # type: str
+                                      **kwargs           # type: Dict[str, str]
                                       ):
         # type: (...) -> Dict[str, str]
 
@@ -179,19 +179,28 @@ class EC2Offer(AWSOffer):
         return float(raw_price)
 
     def reserved_hourly(self,
-                        instance_type,               # type: str
-                        operating_system=None,       # type: Optional[str]
-                        lease_contract_length=None,  # type: Optional[str]
-                        offering_class='standard',   # type: Optional[str]
-                        purchase_option=None,        # type: Optional[str]
-                        amortize_upfront=True,       # type: bool
-                        region=None,                 # type: Optional[str]
+                        instance_type,                               # type: str
+                        operating_system=None,                       # type: Optional[str]
+                        tenancy=None,                                # type: Optional[str]
+                        license_model=None,                          # type: Optional[str]
+                        preinstalled_software=None,                  # type: Optional[str]
+                        lease_contract_length=None,                  # type: Optional[str]
+                        offering_class=EC2_OFFERING_CLASS.STANDARD,  # type: str
+                        purchase_option=None,                        # type: Optional[str]
+                        amortize_upfront=True,                       # type: bool
+                        region=None,                                 # type: Optional[str]
                         ):
         # type: (...) -> float
         self._validate_reserved_price_args(
             lease_contract_length, offering_class, purchase_option)
-        sku = self.get_sku(instance_type, operating_system=operating_system,
-                           region=region)
+        sku = self.get_sku(
+            instance_type,
+            operating_system=operating_system,
+            tenancy=tenancy,
+            license_model=license_model,
+            preinstalled_software=preinstalled_software,
+            region=region,
+        )
 
         term_attributes = [
             lease_contract_length,
@@ -250,18 +259,27 @@ class EC2Offer(AWSOffer):
                          .format(lease_contract_length))
 
     def reserved_upfront(self,
-                         instance_type,               # type: str
-                         operating_system=None,       # type: Optional[str]
-                         lease_contract_length=None,  # type: Optional[str]
-                         offering_class=None,         # type: Optional[str]
-                         purchase_option=None,        # type: Optional[str]
-                         region=None,                 # type: Optional[str]
+                         instance_type,                               # type: str
+                         operating_system=None,                       # type: Optional[str]
+                         tenancy=None,                                # type: Optional[str]
+                         license_model=None,                          # type: Optional[str]
+                         preinstalled_software=None,                  # type: Optional[str]
+                         lease_contract_length=None,                  # type: Optional[str]
+                         offering_class=EC2_OFFERING_CLASS.STANDARD,  # type: str
+                         purchase_option=None,                        # type: Optional[str]
+                         region=None,                                 # type: Optional[str]
                          ):
         # type: (...) -> float
         self._validate_reserved_price_args(
             lease_contract_length, offering_class, purchase_option)
-        sku = self.get_sku(instance_type, operating_system=operating_system,
-                           region=region)
+        sku = self.get_sku(
+            instance_type,
+            operating_system=operating_system,
+            tenancy=tenancy,
+            license_model=license_model,
+            preinstalled_software=preinstalled_software,
+            region=region,
+        )
 
         term_attributes = [
             lease_contract_length,
