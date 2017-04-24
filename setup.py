@@ -26,7 +26,7 @@ setup(
     name='awspricing',
     version=get_version(),
     description='An SDK for AWS Pricing',
-    long_description=open('README.md').read(),
+    long_description=open('README.rst').read(),
     author='Garrett Heel',
     url='https://github.com/garrettheel/aws-pricing',
     scripts=[],
