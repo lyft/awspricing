@@ -3,5 +3,6 @@
 */__pycache__
 *.eggs
 .cache
+.idea
 build/*
 dist/*
