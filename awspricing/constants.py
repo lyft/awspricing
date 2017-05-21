@@ -54,3 +54,11 @@ EC2_PURCHASE_OPTION = Enum(
     partial_upfront='Partial Upfront',
     all_upfront='All Upfront'
 )
+
+RDS_LEASE_CONTRACT_LENGTH = Enum(one_year='1yr', three_year='3yr')
+RDS_OFFERING_CLASS = Enum('standard')
+RDS_PURCHASE_OPTION = Enum(
+    no_upfront='No Upfront',
+    partial_upfront='Partial Upfront',
+    all_upfront='All Upfront'
+)
