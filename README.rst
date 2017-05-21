@@ -40,7 +40,7 @@ Usage
       purchase_option='Partial Upfront',
       region='us-east-1'
     )  # 0.10845205479452055
-
+    
     rds_offer = awspricing.offer('AmazonRDS')
 
     rds_offer.search_skus(
@@ -58,7 +58,6 @@ Usage
       deployment_option='Multi-AZ',
       region='us-east-1'
     ) # 0.35
-
 
 Configuration
 -------------

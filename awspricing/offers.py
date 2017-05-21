@@ -1,4 +1,5 @@
 from collections import defaultdict
+import logging
 
 from typing import Any, Dict, List, Optional, Set, Type  # noqa
 
@@ -14,7 +15,11 @@ from .constants import (
     RDS_PURCHASE_OPTION
 )
 
+
 OFFER_CLASS_MAP = {}
+
+
+logger = logging.getLogger(__name__)
 
 
 def implements(offer_name):
@@ -93,9 +98,21 @@ class AWSOffer(object):
                                       ):
         # type: (...) -> Dict[str, str]
 
+        """Generate a reverse mapping from a hash of product attributes to SKU.
+
+        Only hashes that are unique across all products will be included in the
+        result; products which collide on hash will be discarded.
+        """
+
         product_family = kwargs.get('product_family')
 
         result = {}  # type: Dict[str, str]
+
+        # There are cases where the set of attributes are not unique across all
+        # products and cause hash collisions. In these cases, we take note of
+        # the collision and do not include these products in the mapping.
+        attribute_collisions = set()
+
         for sku, product in six.iteritems(self._offer_data['products']):
             if (product_family is not None and
                     product['productFamily'] != product_family):
@@ -104,8 +121,16 @@ class AWSOffer(object):
                      for attr in attribute_names if attr in product['attributes']]
             key = self.hash_attributes(*attrs)
             if key in result:
-                raise ValueError("Attribute collision for: {}".format(key))
-            result[key] = sku
+                # There is an attribute collision, so do not include any of
+                # these results in the reverse mapping.
+                attribute_collisions.add(key)
+                del result[key]
+            elif key not in attribute_collisions:
+                result[key] = sku
+
+        logger.debug('Discarded {} products when generating reverse mapping.'
+                     .format(len(attribute_collisions)))
+
         return result
 
 
