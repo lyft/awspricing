@@ -7,7 +7,7 @@ A Python library for working with the `AWS Price List API <http://docs.aws.amazo
 Features:
 
 * Simple boto3-like interface
-* Service-specific helper functions (only EC2 and RDS thus far)
+* Service-specific helpers (only EC2 and RDS thus far)
 * Local caching support
 
 Installation
@@ -40,7 +40,7 @@ Usage
       purchase_option='Partial Upfront',
       region='us-east-1'
     )  # 0.10845205479452055
-    
+
     rds_offer = awspricing.offer('AmazonRDS')
 
     rds_offer.search_skus(

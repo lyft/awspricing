@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.0
+
+* Add support for RDS helpers
+
 ## 1.0.2
 
 * Add extra filter options (tenancy, license_model, preinstalled_software) when fetching EC2 reserved prices (#4)
