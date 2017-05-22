@@ -65,62 +65,94 @@ BASIC_RDS_OFFER_DATA =  {
     }
   },
   "terms": {
-    "UHQB4SMCY7W62UNV": {
-      "UHQB4SMCY7W62UNV.HU7G6KETJZ": {
-        "offerTermCode": "HU7G6KETJZ",
-        "sku": "UHQB4SMCY7W62UNV",
-        "effectiveDate": "2015-10-31T23:59:59Z",
-        "priceDimensions": {
-          "UHQB4SMCY7W62UNV.HU7G6KETJZ.2TG2D8R56U": {
-            "rateCode": "UHQB4SMCY7W62UNV.HU7G6KETJZ.2TG2D8R56U",
-            "description": "Upfront Fee",
-            "unit": "Quantity",
-            "pricePerUnit": {
-              "USD": "648"
+    "Reserved": {
+      "UHQB4SMCY7W62UNV": {
+        "UHQB4SMCY7W62UNV.HU7G6KETJZ": {
+          "offerTermCode": "HU7G6KETJZ",
+          "sku": "UHQB4SMCY7W62UNV",
+          "effectiveDate": "2015-10-31T23:59:59Z",
+          "priceDimensions": {
+            "UHQB4SMCY7W62UNV.HU7G6KETJZ.2TG2D8R56U": {
+              "rateCode": "UHQB4SMCY7W62UNV.HU7G6KETJZ.2TG2D8R56U",
+              "description": "Upfront Fee",
+              "unit": "Quantity",
+              "pricePerUnit": {
+                "USD": "648"
+              },
+              "appliesTo": []
             },
-            "appliesTo": []
+            "UHQB4SMCY7W62UNV.HU7G6KETJZ.6YS6EN2CT7": {
+              "rateCode": "UHQB4SMCY7W62UNV.HU7G6KETJZ.6YS6EN2CT7",
+              "description": "Oracle SE1 (BYOL), db.m4.large instance-hours used this month",
+              "beginRange": "0",
+              "endRange": "Inf",
+              "unit": "hrs",
+              "pricePerUnit": {
+                "USD": "0.1120000000"
+              },
+              "appliesTo": []
+            }
           },
-          "UHQB4SMCY7W62UNV.HU7G6KETJZ.6YS6EN2CT7": {
-            "rateCode": "UHQB4SMCY7W62UNV.HU7G6KETJZ.6YS6EN2CT7",
-            "description": "Oracle SE1 (BYOL), db.m4.large instance-hours used this month",
-            "beginRange": "0",
-            "endRange": "Inf",
-            "unit": "hrs",
-            "pricePerUnit": {
-              "USD": "0.1120000000"
-            },
-            "appliesTo": []
+          "termAttributes": {
+            "LeaseContractLength": "1yr",
+            "OfferingClass": "standard",
+            "PurchaseOption": "Partial Upfront"
           }
         },
-        "termAttributes": {
-          "LeaseContractLength": "1yr",
-          "OfferingClass": "standard",
-          "PurchaseOption": "Partial Upfront"
+        "UHQB4SMCY7W62UNV.6QCMYABX3D": {
+          "offerTermCode": "6QCMYABX3D",
+          "sku": "UHQB4SMCY7W62UNV",
+          "effectiveDate": "2015-10-31T23:59:59Z",
+          "priceDimensions": {
+            "UHQB4SMCY7W62UNV.6QCMYABX3D.6YS6EN2CT7": {
+              "rateCode": "UHQB4SMCY7W62UNV.6QCMYABX3D.6YS6EN2CT7",
+              "description": "USD 0.0 per Oracle SE1 (BYOL), db.m4.large instance-hour (or partial hour)",
+              "beginRange": "0",
+              "endRange": "Inf",
+              "unit": "hrs",
+              "pricePerUnit": {
+                "USD": "0.0000000000"
+              },
+              "appliesTo": []
+            },
+            "UHQB4SMCY7W62UNV.6QCMYABX3D.2TG2D8R56U": {
+              "rateCode": "UHQB4SMCY7W62UNV.6QCMYABX3D.2TG2D8R56U",
+              "description": "Upfront Fee",
+              "unit": "Quantity",
+              "pricePerUnit": {
+                "USD": "1601"
+              },
+              "appliesTo": []
+            }
+          },
+          "termAttributes": {
+            "LeaseContractLength": "1yr",
+            "OfferingClass": "standard",
+            "PurchaseOption": "All Upfront"
+          }
         }
       }
     },
-    "RYXYA7XK2PDKTNV4": {
-      "RYXYA7XK2PDKTNV4.4NA7Y494T4": {
-        "offerTermCode": "4NA7Y494T4",
-        "sku": "RYXYA7XK2PDKTNV4",
-        "effectiveDate": "2015-10-31T23:59:59Z",
-        "priceDimensions": {
-          "RYXYA7XK2PDKTNV4.4NA7Y494T4.6YS6EN2CT7": {
-            "rateCode": "RYXYA7XK2PDKTNV4.4NA7Y494T4.6YS6EN2CT7",
-            "description": "MariaDB, db.m4.large instance-hours used this month",
-            "beginRange": "0",
-            "endRange": "Inf",
-            "unit": "hrs",
-            "pricePerUnit": {
-              "USD": "0.1590000000"
-            },
-            "appliesTo": []
-          }
-        },
-        "termAttributes": {
-          "LeaseContractLength": "1yr",
-          "OfferingClass": "standard",
-          "PurchaseOption": "No Upfront"
+    "OnDemand": {
+      "UHQB4SMCY7W62UNV": {
+        "UHQB4SMCY7W62UNV.JRTCKXETXF": {
+          "offerTermCode": "JRTCKXETXF",
+          "sku": "UHQB4SMCY7W62UNV",
+          "effectiveDate": "2017-03-01T00:00:00Z",
+          "priceDimensions": {
+            "UHQB4SMCY7W62UNV.JRTCKXETXF.6YS6EN2CT7": {
+              "rateCode": "UHQB4SMCY7W62UNV.JRTCKXETXF.6YS6EN2CT7",
+              "description": "$0.350 per RDS db.m4.large Multi-AZ instance hour (or partial hour) running Oracle SE1 (BYOL)",
+              "beginRange": "0",
+              "endRange": "Inf",
+              "unit": "hrs",
+              "pricePerUnit": {
+                "USD": "0.3500000000"
+              },
+              "appliesTo": []
+            }
+          },
+          "termAttributes": {}
         }
       }
     }

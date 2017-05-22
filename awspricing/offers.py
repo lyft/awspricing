@@ -390,7 +390,7 @@ class RDSOffer(AWSOffer):
                 region=None                  # type: Optional[str]
                 ):
         region = self._normalize_region(region)
-        deployment_option = deployment_option or self.deployment_option
+        deployment_option = deployment_option or self.default_deployment_option
 
         attributes = [instance_type, database_engine,
                       deployment_option, license_model, region]
