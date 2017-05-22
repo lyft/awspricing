@@ -10,6 +10,9 @@ from .constants import (
     EC2_LEASE_CONTRACT_LENGTH,
     EC2_OFFERING_CLASS,
     EC2_PURCHASE_OPTION,
+    RDS_LEASE_CONTRACT_LENGTH,
+    RDS_OFFERING_CLASS,
+    RDS_PURCHASE_OPTION
 )
 
 
@@ -114,7 +117,8 @@ class AWSOffer(object):
             if (product_family is not None and
                     product['productFamily'] != product_family):
                 continue
-            attrs = [product['attributes'][attr] for attr in attribute_names]
+            attrs = [product['attributes'][attr]
+                     for attr in attribute_names if attr in product['attributes']]
             key = self.hash_attributes(*attrs)
             if key in result:
                 # There is an attribute collision, so do not include any of
@@ -133,7 +137,7 @@ class AWSOffer(object):
 @implements('AmazonEC2')
 class EC2Offer(AWSOffer):
 
-    HOURS_IN_YEAR = 24*365
+    HOURS_IN_YEAR = 24 * 365
 
     def __init__(self, *args, **kwargs):
         super(EC2Offer, self).__init__(*args, **kwargs)
@@ -279,7 +283,7 @@ class EC2Offer(AWSOffer):
         if lease_contract_length == '1yr':
             return cls.HOURS_IN_YEAR
         elif lease_contract_length == '3yr':
-            return 3*cls.HOURS_IN_YEAR
+            return 3 * cls.HOURS_IN_YEAR
         raise ValueError("Unknown lease contract length: {}"
                          .format(lease_contract_length))
 
@@ -352,3 +356,222 @@ class EC2Offer(AWSOffer):
                 offering_class == 'convertible'):
             raise ValueError("The convertible offering class is not available "
                              "on a 1year lease.")
+
+
+@implements('AmazonRDS')
+class RDSOffer(AWSOffer):
+
+    HOURS_IN_YEAR = 24 * 365
+
+    def __init__(self, *args, **kwargs):
+        super(RDSOffer, self).__init__(*args, **kwargs)
+
+        self.default_deployment_option = 'Single-AZ'
+
+        self._reverse_sku = self._generate_reverse_sku_mapping(
+            'instanceType',
+            'databaseEngine',
+            'deploymentOption',
+            'licenseModel',
+            'location',
+            'databaseEdition',
+            product_family='Database Instance'
+        )
+
+        # Lazily-loaded cache to hold offerTermCodes within a SKU
+        self._reserved_terms_to_offer_term_code = defaultdict(dict)
+
+    def get_sku(self,
+                instance_type,               # type: str
+                database_engine,             # type: str
+                license_model=None,          # type: str
+                deployment_option=None,      # type: Optional[str]
+                database_edition=None,       # type: Optional[str]
+                region=None                  # type: Optional[str]
+                ):
+        region = self._normalize_region(region)
+        deployment_option = deployment_option or self.default_deployment_option
+
+        attributes = [instance_type, database_engine,
+                      deployment_option, license_model, region]
+
+        if database_edition is not None:
+            attributes.append(database_edition)
+
+        if not all(attributes):
+            raise ValueError("All attributes are required: {}"
+                             .format(attributes))
+
+        sku = self._reverse_sku.get(self.hash_attributes(*attributes))
+        if sku is None:
+            raise ValueError("Unable to lookup SKU for attributes: {}"
+                             .format(attributes))
+        return sku
+
+    def ondemand_hourly(self,
+                        instance_type,               # type: str
+                        database_engine,             # type: str
+                        license_model=None,          # type: str
+                        deployment_option=None,      # type: Optional[str]
+                        database_edition=None,       # type: Optional[str]
+                        region=None                  # type: Optional[str]
+                        ):
+        # type: (...) -> float
+        sku = self.get_sku(
+            instance_type,
+            database_engine,
+            deployment_option=deployment_option,
+            license_model=license_model,
+            database_edition=database_edition,
+            region=region
+        )
+        term = self._offer_data['terms']['OnDemand'][sku]
+        price_dimensions = next(six.itervalues(term))['priceDimensions']
+        price_dimension = next(six.itervalues(price_dimensions))
+        raw_price = price_dimension['pricePerUnit']['USD']
+        return float(raw_price)
+
+    def reserved_hourly(self,
+                        instance_type,               # type: str
+                        database_engine,             # type: str
+                        license_model=None,          # type: str
+                        deployment_option=None,      # type: Optional[str]
+                        lease_contract_length=None,                  # type: Optional[str]
+                        offering_class=RDS_OFFERING_CLASS.STANDARD,  # type: str
+                        purchase_option=None,                        # type: Optional[str]
+                        amortize_upfront=True,                       # type: bool
+                        database_edition=None,                       # type: Optional[str]
+                        region=None,                                 # type: Optional[str]
+                        ):
+        # type: (...) -> float
+        self._validate_reserved_price_args(
+            lease_contract_length, offering_class, purchase_option)
+        sku = self.get_sku(
+            instance_type,
+            database_engine,
+            deployment_option=deployment_option,
+            license_model=license_model,
+            database_edition=database_edition,
+            region=region,
+        )
+
+        term_attributes = [
+            lease_contract_length,
+            offering_class,
+            purchase_option
+        ]
+        term = self._get_reserved_offer_term(sku, term_attributes)
+
+        price_dimensions = term['priceDimensions'].values()
+        hourly_dimension = next(d for d in price_dimensions
+                                if d['unit'] == 'hrs')
+        upfront_dimension = next(d for d in price_dimensions
+                                 if d['description'] == 'Upfront Fee')
+
+        raw_hourly = hourly_dimension['pricePerUnit']['USD']
+        raw_upfront = upfront_dimension['pricePerUnit']['USD']
+
+        hourly = float(raw_hourly)
+        upfront = float(raw_upfront)
+
+        if amortize_upfront:
+            hours = self._get_hours_in_lease_contract_length(
+                lease_contract_length)
+            hourly += (upfront / hours)
+
+        return hourly
+
+    def _get_reserved_offer_term(self, sku, term_attributes):
+        # type: (str, List[str]) -> Dict[str, Any]
+        term_attributes_hash = self.hash_attributes(*term_attributes)
+        all_terms = self._offer_data['terms']['Reserved'][sku]
+        sku_terms = self._reserved_terms_to_offer_term_code[sku]
+        if term_attributes_hash not in sku_terms:
+            for term_sku, term in six.iteritems(all_terms):
+                hashed = self._hash_reserved_term_attributes(term)
+                sku_terms[hashed] = term['offerTermCode']
+
+        code = sku_terms[term_attributes_hash]
+        return all_terms['.'.join([sku, code])]
+
+    def _hash_reserved_term_attributes(self, term):
+        attrs = term['termAttributes']
+        return self.hash_attributes(
+            attrs['LeaseContractLength'],
+            attrs['OfferingClass'],
+            attrs['PurchaseOption']
+        )
+
+    @classmethod
+    def _get_hours_in_lease_contract_length(cls, lease_contract_length):
+        if lease_contract_length == '1yr':
+            return cls.HOURS_IN_YEAR
+        elif lease_contract_length == '3yr':
+            return 3 * cls.HOURS_IN_YEAR
+        raise ValueError("Unknown lease contract length: {}"
+                         .format(lease_contract_length))
+
+    def reserved_upfront(self,
+                         instance_type,                               # type: str
+                         database_engine,                             # type: str
+                         license_model=None,                          # type: str
+                         deployment_option=None,                      # type: Optional[str]
+                         lease_contract_length=None,                  # type: Optional[str]
+                         offering_class=RDS_OFFERING_CLASS.STANDARD,  # type: str
+                         purchase_option=None,                        # type: Optional[str]
+                         database_edition=None,                        # type: Optional[str]
+                         region=None,                                 # type: Optional[str]
+                         ):
+        # type: (...) -> float
+        self._validate_reserved_price_args(
+            lease_contract_length, offering_class, purchase_option)
+        sku = self.get_sku(
+            instance_type,
+            database_engine,
+            deployment_option=deployment_option,
+            license_model=license_model,
+            database_edition=database_edition,
+            region=region,
+        )
+
+        term_attributes = [
+            lease_contract_length,
+            offering_class,
+            purchase_option
+        ]
+        term = self._get_reserved_offer_term(sku, term_attributes)
+
+        price_dimensions = term['priceDimensions'].values()
+        upfront_dimension = next(d for d in price_dimensions
+                                 if d['description'] == 'Upfront Fee')
+
+        raw_upfront = upfront_dimension['pricePerUnit']['USD']
+        return float(raw_upfront)
+
+    @classmethod
+    def _validate_reserved_price_args(cls,
+                                      lease_contract_length,  # type: str
+                                      offering_class,         # type: str
+                                      purchase_option,        # type: str
+                                      ):
+        # type: (...) -> None
+        if lease_contract_length not in RDS_LEASE_CONTRACT_LENGTH.values():
+            valid_options = RDS_LEASE_CONTRACT_LENGTH.values()
+            raise ValueError(
+                "Lease contract '{}' is invalid. Valid options are: {}"
+                .format(lease_contract_length, valid_options)
+            )
+
+        if offering_class not in RDS_OFFERING_CLASS.values():
+            valid_options = RDS_OFFERING_CLASS.values()
+            raise ValueError(
+                "Offering class '{}' is invalid. Valid options are: {}"
+                .format(offering_class, valid_options)
+            )
+
+        if purchase_option not in RDS_PURCHASE_OPTION.values():
+            valid_options = RDS_PURCHASE_OPTION.values()
+            raise ValueError(
+                "Purchase option '{}' is invalid. Valid options are: {}"
+                .format(purchase_option, valid_options)
+            )
