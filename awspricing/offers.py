@@ -241,11 +241,11 @@ class EC2Offer(AWSOffer):
         price_dimensions = term['priceDimensions'].values()
         hourly_dimension = next(d for d in price_dimensions
                                 if d['unit'] == 'Hrs')
-        upfront_dimension = next(d for d in price_dimensions
-                                 if d['description'] == 'Upfront Fee')
+        upfront_dimension = next((d for d in price_dimensions
+                                  if d['description'] == 'Upfront Fee'), None)
 
         raw_hourly = hourly_dimension['pricePerUnit']['USD']
-        raw_upfront = upfront_dimension['pricePerUnit']['USD']
+        raw_upfront = upfront_dimension['pricePerUnit']['USD'] if upfront_dimension else 0
 
         hourly = float(raw_hourly)
         upfront = float(raw_upfront)
@@ -318,10 +318,10 @@ class EC2Offer(AWSOffer):
         term = self._get_reserved_offer_term(sku, term_attributes)
 
         price_dimensions = term['priceDimensions'].values()
-        upfront_dimension = next(d for d in price_dimensions
-                                 if d['description'] == 'Upfront Fee')
+        upfront_dimension = next((d for d in price_dimensions
+                                  if d['description'] == 'Upfront Fee'), None)
 
-        raw_upfront = upfront_dimension['pricePerUnit']['USD']
+        raw_upfront = upfront_dimension['pricePerUnit']['USD'] if upfront_dimension else 0
         return float(raw_upfront)
 
     @classmethod
@@ -465,11 +465,11 @@ class RDSOffer(AWSOffer):
         price_dimensions = term['priceDimensions'].values()
         hourly_dimension = next(d for d in price_dimensions
                                 if d['unit'] == 'hrs')
-        upfront_dimension = next(d for d in price_dimensions
-                                 if d['description'] == 'Upfront Fee')
+        upfront_dimension = next((d for d in price_dimensions
+                                  if d['description'] == 'Upfront Fee'), None)
 
         raw_hourly = hourly_dimension['pricePerUnit']['USD']
-        raw_upfront = upfront_dimension['pricePerUnit']['USD']
+        raw_upfront = upfront_dimension['pricePerUnit']['USD'] if upfront_dimension else 0
 
         hourly = float(raw_hourly)
         upfront = float(raw_upfront)
@@ -542,10 +542,10 @@ class RDSOffer(AWSOffer):
         term = self._get_reserved_offer_term(sku, term_attributes)
 
         price_dimensions = term['priceDimensions'].values()
-        upfront_dimension = next(d for d in price_dimensions
-                                 if d['description'] == 'Upfront Fee')
+        upfront_dimension = next((d for d in price_dimensions
+                                  if d['description'] == 'Upfront Fee'), None)
 
-        raw_upfront = upfront_dimension['pricePerUnit']['USD']
+        raw_upfront = upfront_dimension['pricePerUnit']['USD'] if upfront_dimension else 0
         return float(raw_upfront)
 
     @classmethod

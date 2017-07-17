@@ -2,17 +2,17 @@ import copy
 
 import pytest
 
-from awspricing.offers import AWSOffer
+from awspricing.offers import AWSOffer, EC2Offer
+from awspricing.constants import EC2_PURCHASE_OPTION, EC2_LEASE_CONTRACT_LENGTH
 
 from tests.data.ec2_offer import BASIC_EC2_OFFER_DATA, BASIC_EC2_OFFER_SKU
 
 
-@pytest.fixture(name='offer')
-def basic_offer():
-    return AWSOffer(BASIC_EC2_OFFER_DATA)
-
-
 class TestAWSOffer(object):
+
+    @pytest.fixture(name='offer')
+    def basic_offer(self):
+        return AWSOffer(BASIC_EC2_OFFER_DATA)
 
     def test_raw(self, offer):
         assert 'version' in offer.raw
@@ -63,6 +63,12 @@ class TestAWSOffer(object):
 
 class TestEC2Offer(object):
 
+    @pytest.fixture(name='offer')
+    def basic_offer(self):
+        offer = EC2Offer(BASIC_EC2_OFFER_DATA)
+        offer.default_operating_system = 'Linux'
+        return offer
+
     def test_search_skus_empty(self, offer):
         assert offer.search_skus() == {BASIC_EC2_OFFER_SKU}
 
@@ -71,3 +77,19 @@ class TestEC2Offer(object):
             instance_type='c4.large',
             location='US East (N. Virginia)',
         ) == {BASIC_EC2_OFFER_SKU}
+
+    def test_reserved_hourly_no_upfront(self, offer):
+        assert offer.reserved_hourly(
+            'c4.large',
+            region='us-east-1',
+            lease_contract_length=EC2_LEASE_CONTRACT_LENGTH.ONE_YEAR,
+            purchase_option=EC2_PURCHASE_OPTION.NO_UPFRONT,
+        ) == 0.063
+
+    def test_reserved_upfront_no_upfront(self, offer):
+        assert offer.reserved_upfront(
+            'c4.large',
+            region='us-east-1',
+            lease_contract_length=EC2_LEASE_CONTRACT_LENGTH.ONE_YEAR,
+            purchase_option=EC2_PURCHASE_OPTION.NO_UPFRONT,
+        ) == 0.0

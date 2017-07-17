@@ -156,7 +156,30 @@ BASIC_EC2_OFFER_DATA = {
                         "OfferingClass" : "convertible",
                         "PurchaseOption" : "Partial Upfront"
                     }
-                }
+                },
+                "4C7N4APU9GEUZ6H6.4NA7Y494T4" : {
+                    "offerTermCode" : "4NA7Y494T4",
+                    "sku" : "4C7N4APU9GEUZ6H6",
+                    "effectiveDate" : "2017-04-30T23:59:59Z",
+                    "priceDimensions" : {
+                        "4C7N4APU9GEUZ6H6.4NA7Y494T4.6YS6EN2CT7" : {
+                        "rateCode" : "4C7N4APU9GEUZ6H6.4NA7Y494T4.6YS6EN2CT7",
+                        "description" : "Linux/UNIX (Amazon VPC), c4.large reserved instance applied",
+                        "beginRange" : "0",
+                        "endRange" : "Inf",
+                        "unit" : "Hrs",
+                        "pricePerUnit" : {
+                            "USD" : "0.0630000000"
+                        },
+                        "appliesTo" : [ ]
+                        }
+                    },
+                    "termAttributes" : {
+                        "LeaseContractLength" : "1yr",
+                        "OfferingClass" : "standard",
+                        "PurchaseOption" : "No Upfront"
+                    }
+                },
             },
         }
     }
