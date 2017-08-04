@@ -5,7 +5,7 @@ import pytest
 from awspricing.offers import AWSOffer, EC2Offer
 from awspricing.constants import EC2_PURCHASE_OPTION, EC2_LEASE_CONTRACT_LENGTH
 
-from tests.data.ec2_offer import BASIC_EC2_OFFER_DATA, BASIC_EC2_OFFER_SKU
+from tests.data.ec2_offer import BASIC_EC2_OFFER_DATA, BASIC_EC2_OFFER_SKU, BASIC_EC2_OFFER_SKU_DATA_TRANSFER, BASIC_EC2_OFFER_SKU_DEDICATED_HOST, BASIC_EC2_OFFER_SKU_FEE, BASIC_EC2_OFFER_SKU_IP_ADDRESS, BASIC_EC2_OFFER_SKU_LOAD_BALANCER, BASIC_EC2_OFFER_SKU_LOAD_BALANCER_APPLICATION, BASIC_EC2_OFFER_SKU_NAT_GATEWAY, BASIC_EC2_OFFER_SKU_STORAGE_SNAPSHOT, BASIC_EC2_OFFER_SKU_STORAGE, BASIC_EC2_OFFER_SKU_SYSTEM_OPERATION
 
 
 class TestAWSOffer(object):
@@ -44,7 +44,8 @@ class TestAWSOffer(object):
 
     def test_generate_reverse_sku_mapping(self, offer):
         assert offer._generate_reverse_sku_mapping(
-            'instanceType', 'operatingSystem', 'tenancy'
+            'instanceType', 'operatingSystem', 'tenancy',
+            product_family='Compute Instance'
         ) == {'c4.large|Linux|Shared': BASIC_EC2_OFFER_SKU}
 
     def test_generate_reverse_sku_mapping_collision(self, offer):
@@ -57,7 +58,8 @@ class TestAWSOffer(object):
         offer.raw['products'][collision_sku] = offer.raw['products'][BASIC_EC2_OFFER_SKU]
 
         assert offer._generate_reverse_sku_mapping(
-            'instanceType', 'operatingSystem', 'tenancy'
+            'instanceType', 'operatingSystem', 'tenancy',
+            product_family='Compute Instance'
         ) == {}
 
 
@@ -70,13 +72,40 @@ class TestEC2Offer(object):
         return offer
 
     def test_search_skus_empty(self, offer):
-        assert offer.search_skus() == {BASIC_EC2_OFFER_SKU}
+        assert offer.search_skus() == {BASIC_EC2_OFFER_SKU,
+                                       BASIC_EC2_OFFER_SKU_DATA_TRANSFER,
+                                       BASIC_EC2_OFFER_SKU_DEDICATED_HOST,
+                                       BASIC_EC2_OFFER_SKU_FEE,
+                                       BASIC_EC2_OFFER_SKU_IP_ADDRESS,
+                                       BASIC_EC2_OFFER_SKU_LOAD_BALANCER,
+                                       BASIC_EC2_OFFER_SKU_LOAD_BALANCER_APPLICATION,
+                                       BASIC_EC2_OFFER_SKU_NAT_GATEWAY,
+                                       BASIC_EC2_OFFER_SKU_STORAGE_SNAPSHOT,
+                                       BASIC_EC2_OFFER_SKU_STORAGE,
+                                       BASIC_EC2_OFFER_SKU_SYSTEM_OPERATION}
+
+    def test_search_skus_empty_with_family(self, offer):
+        assert offer.search_skus(product_family='Compute Instance') == {BASIC_EC2_OFFER_SKU}
 
     def test_search_skus_attributes(self, offer):
         assert offer.search_skus(
             instance_type='c4.large',
             location='US East (N. Virginia)',
         ) == {BASIC_EC2_OFFER_SKU}
+
+    def test_search_skus_with_wrong_productfamily_not_found(self, offer):
+        assert offer.search_skus(
+            instance_type='c4.large',
+            location='US East (N. Virginia)',
+            product_family='Storage'
+        ) == set([])
+
+    def test_search_skus_with_productfamily_found(self, offer):
+        assert offer.search_skus(
+            volumeType='General Purpose',
+            usagetype='APS3-EBS:VolumeUsage.gp2',
+            product_family='Storage'
+        ) == {BASIC_EC2_OFFER_SKU_STORAGE}
 
     def test_reserved_hourly_no_upfront(self, offer):
         assert offer.reserved_hourly(
