@@ -54,8 +54,12 @@ class AWSOffer(object):
         :return: a set of matching SKUs
         """
         attributes = self._pythonify_attributes(attributes)
+        product_family = attributes.pop('productFamily', None)
         result = set()
         for sku, product in six.iteritems(self._offer_data['products']):
+            if (product_family is not None and
+                    product['productFamily'] != product_family):
+                continue
             product_attributes = product['attributes']
             all_match = True
             for attr_name, attr_value in six.iteritems(attributes):
