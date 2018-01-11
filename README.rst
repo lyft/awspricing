@@ -58,6 +58,26 @@ Usage
       deployment_option='Multi-AZ',
       region='us-east-1'
     ) # 0.35
+..
+
+**Note** : AWS provides the pricing list in json format with no warranty of format change.  If a format change by AWS causes a breaking change; the below mitigation can be used at the cost of "stale" pricing.
+
+.. code-block:: python
+
+    import awspricing
+
+    """Known EC2 versions - [20180108224013, 20171128215034, 20171026015458,
+    20171007002655, 20170901182201, 20170803003029, 20170605233259,
+    20170526181956, 20170429002201, 20170324211955, 20170302183221,
+    20170210223144, 20161213014831, 20161026205455, 20160901005907, 
+    20160628000628, 20160126001708, 20151209144527]"""
+    ec2_offer_old = awspricing.offer('AmazonEC2', version='20171206215854')
+
+    """Known RDS versions - [20180110200526, 20171206215854, 20171026230010, 20170926202318,
+    20170918190020, 20170729000821, 20170629221928, 20170419200300, 20170116233509,
+    20161017162910, 20161011200949, 20160628000723, 20160508033136, 20160125210045,
+    20151209144503]"""
+    rds_offer_old = awspricing.offer('AmazonRDS', version='20171206215854')
 
 Configuration
 -------------
