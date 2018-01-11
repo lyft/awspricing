@@ -62,6 +62,20 @@ BASIC_RDS_OFFER_DATA =  {
         "enhancedNetworkingSupported": "Yes",
         "processorFeatures": "Intel AVX; Intel AVX2; Intel Turbo"
       }
+    },
+    'BNSJSY9CBT29VNPD': {
+      'sku': 'BNSJSY9CBT29VNPD',
+      'attributes': {
+        'servicecode': 'AWSDataTransfer',
+        'transferType': 'Inter Region Peering Data Transfer Inbound',
+        'fromLocation': 'External',
+        'fromLocationType': 'AWS Region',
+        'toLocation': 'US East (Ohio)',
+        'toLocationType': 'AWS Region',
+        'usagetype': 'USE2-AWS-In-Bytes',
+        'operation': '',
+        'servicename': 'AWS Data Transfer'
+      }
     }
   },
   "terms": {
