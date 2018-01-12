@@ -66,18 +66,21 @@ Usage
 
     import awspricing
 
-    """Known EC2 versions - [20180108224013, 20171128215034, 20171026015458,
-    20171007002655, 20170901182201, 20170803003029, 20170605233259,
-    20170526181956, 20170429002201, 20170324211955, 20170302183221,
-    20170210223144, 20161213014831, 20161026205455, 20160901005907, 
-    20160628000628, 20160126001708, 20151209144527]"""
-    ec2_offer_old = awspricing.offer('AmazonEC2', version='20171206215854')
+    # For finding EC2 price list versions see script below or download https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonEC2/index.json
+    ec2_offer_old = awspricing.offer('AmazonEC2', version='some_other_version')
 
-    """Known RDS versions - [20180110200526, 20171206215854, 20171026230010, 20170926202318,
-    20170918190020, 20170729000821, 20170629221928, 20170419200300, 20170116233509,
-    20161017162910, 20161011200949, 20160628000723, 20160508033136, 20160125210045,
-    20151209144503]"""
-    rds_offer_old = awspricing.offer('AmazonRDS', version='20171206215854')
+    # For finding RDS price list versions see script below or download https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonRDS/index.json
+    rds_offer_old = awspricing.offer('AmazonRDS', version='some_other_version')
+
+
+.. code-block:: sh
+
+    $ # EC2
+    $ curl https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonEC2/index.json | python -m json.tool
+
+    $ # RDS
+    $ curl https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonRDS/index.json | python -m json.tool
+
 
 Configuration
 -------------
