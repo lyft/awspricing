@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.2
+
+* Ignore sku's with unexpected format (#15)
+* Add optional version input for offers to support changing to non-current pricing list (#15)
+
 ## 1.1.1
 
 * Fix a bug with reserved costs and a No Upfront purchase option (#11)

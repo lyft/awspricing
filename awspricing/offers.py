@@ -114,8 +114,12 @@ class AWSOffer(object):
         attribute_collisions = set()
 
         for sku, product in six.iteritems(self._offer_data['products']):
-            if (product_family is not None and
-                    product['productFamily'] != product_family):
+            # Introduced for Data transfer SKU's that are not like regular EC2 offers
+            try:
+                if (product_family is not None and
+                        product['productFamily'] != product_family):
+                    continue
+            except KeyError:
                 continue
             attrs = [product['attributes'][attr]
                      for attr in attribute_names if attr in product['attributes']]

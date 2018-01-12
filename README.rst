@@ -58,6 +58,29 @@ Usage
       deployment_option='Multi-AZ',
       region='us-east-1'
     ) # 0.35
+..
+
+**Note** : AWS provides the pricing list in json format with no warranty of format change.  If a format change by AWS causes a breaking change; the below mitigation can be used at the cost of "stale" pricing.
+
+.. code-block:: python
+
+    import awspricing
+
+    # For finding EC2 price list versions see script below or download https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonEC2/index.json
+    ec2_offer_old = awspricing.offer('AmazonEC2', version='some_other_version')
+
+    # For finding RDS price list versions see script below or download https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonRDS/index.json
+    rds_offer_old = awspricing.offer('AmazonRDS', version='some_other_version')
+
+
+.. code-block:: sh
+
+    $ # EC2
+    $ curl https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonEC2/index.json | python -m json.tool
+
+    $ # RDS
+    $ curl https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonRDS/index.json | python -m json.tool
+
 
 Configuration
 -------------

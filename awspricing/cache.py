@@ -36,7 +36,7 @@ def cache_path():
         if not os.path.isdir(setting):
             try:
                 os.makedirs(setting)
-            except:
+            except OSError:
                 logger.exception("Unable to create cache directory: {}"
                                  .format(setting))
                 raise
