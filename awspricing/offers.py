@@ -244,7 +244,7 @@ class EC2Offer(AWSOffer):
 
         price_dimensions = term['priceDimensions'].values()
         hourly_dimension = next(d for d in price_dimensions
-                                if d['unit'] == 'Hrs')
+                                if d['unit'].lower() == 'hrs')
         upfront_dimension = next((d for d in price_dimensions
                                   if d['description'] == 'Upfront Fee'), None)
 
@@ -468,7 +468,7 @@ class RDSOffer(AWSOffer):
 
         price_dimensions = term['priceDimensions'].values()
         hourly_dimension = next(d for d in price_dimensions
-                                if d['unit'] == 'hrs')
+                                if d['unit'].lower() == 'hrs')
         upfront_dimension = next((d for d in price_dimensions
                                   if d['description'] == 'Upfront Fee'), None)
 

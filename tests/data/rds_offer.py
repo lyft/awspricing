@@ -100,7 +100,7 @@ BASIC_RDS_OFFER_DATA =  {
               "description": "Oracle SE1 (BYOL), db.m4.large instance-hours used this month",
               "beginRange": "0",
               "endRange": "Inf",
-              "unit": "hrs",
+              "unit": "Hrs",
               "pricePerUnit": {
                 "USD": "0.1120000000"
               },
@@ -123,7 +123,7 @@ BASIC_RDS_OFFER_DATA =  {
               "description": "USD 0.0 per Oracle SE1 (BYOL), db.m4.large instance-hour (or partial hour)",
               "beginRange": "0",
               "endRange": "Inf",
-              "unit": "hrs",
+              "unit": "Hrs",
               "pricePerUnit": {
                 "USD": "0.0000000000"
               },
@@ -159,7 +159,7 @@ BASIC_RDS_OFFER_DATA =  {
               "description": "$0.350 per RDS db.m4.large Multi-AZ instance hour (or partial hour) running Oracle SE1 (BYOL)",
               "beginRange": "0",
               "endRange": "Inf",
-              "unit": "hrs",
+              "unit": "Hrs",
               "pricePerUnit": {
                 "USD": "0.3500000000"
               },
