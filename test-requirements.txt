@@ -5,4 +5,4 @@ pytest>=3.0,<4.0
 mock==2.0.0
 
 # License: MIT
-flake8==3.3.0
+flake8==3.5.0

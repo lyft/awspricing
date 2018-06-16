@@ -1,10 +1,7 @@
-# bash needed for pipefail
-SHELL := /bin/bash
-
 test: test_lint test_unit
 
 test_unit:
-	py.test tests/unit
+	pytest tests/unit
 
 test_lint:
 	flake8
