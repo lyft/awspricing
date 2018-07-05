@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.3
+
+ * Fix a bug with the case of dimension units (#16)
+
 ## 1.1.2
 
 * Ignore sku's with unexpected format (#15)
