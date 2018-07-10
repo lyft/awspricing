@@ -104,7 +104,7 @@ class AWSOffer(object):
         result; products which collide on hash will be discarded.
         """
 
-        product_family = kwargs.get('product_family')
+        product_families = kwargs.get('product_families')
 
         result = {}  # type: Dict[str, str]
 
@@ -116,8 +116,7 @@ class AWSOffer(object):
         for sku, product in six.iteritems(self._offer_data['products']):
             # Introduced for Data transfer SKU's that are not like regular EC2 offers
             try:
-                if (product_family is not None and
-                        product['productFamily'] != product_family):
+                if product_families and product['productFamily'] not in product_families:
                     continue
             except KeyError:
                 continue
@@ -154,7 +153,10 @@ class EC2Offer(AWSOffer):
         self._reverse_sku = self._generate_reverse_sku_mapping(
             'instanceType', 'operatingSystem', 'tenancy', 'licenseModel',
             'preInstalledSw', 'location',
-            product_family='Compute Instance'
+            # Both families are queried assuming that instance names will never clash between
+            # them. This should be true given metal instance naming conventions thus far (instance
+            # size is 'metal').
+            product_families=['Compute Instance', 'Compute Instance (bare metal)']
         )
 
         # Lazily-loaded cache to hold offerTermCodes within a SKU
@@ -379,7 +381,7 @@ class RDSOffer(AWSOffer):
             'licenseModel',
             'location',
             'databaseEdition',
-            product_family='Database Instance'
+            product_families=['Database Instance']
         )
 
         # Lazily-loaded cache to hold offerTermCodes within a SKU

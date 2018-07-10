@@ -5,7 +5,13 @@ import pytest
 from awspricing.offers import AWSOffer, EC2Offer
 from awspricing.constants import EC2_PURCHASE_OPTION, EC2_LEASE_CONTRACT_LENGTH
 
-from tests.data.ec2_offer import BASIC_EC2_OFFER_DATA, BASIC_EC2_OFFER_SKU, BASIC_EC2_OFFER_MODIFIED_FORMAT
+from tests.data.ec2_offer import (
+    BARE_METAL_EC2_OFFER,
+    BARE_METAL_EC2_SKU,
+    BASIC_EC2_OFFER_DATA,
+    BASIC_EC2_OFFER_SKU,
+    BASIC_EC2_OFFER_MODIFIED_FORMAT
+)
 
 
 class TestAWSOffer(object):
@@ -13,6 +19,10 @@ class TestAWSOffer(object):
     @pytest.fixture(name='offer')
     def basic_offer(self):
         return AWSOffer(BASIC_EC2_OFFER_DATA)
+
+    @pytest.fixture
+    def bare_metal_offer(self):
+        return AWSOffer(BARE_METAL_EC2_OFFER)
 
     def test_raw(self, offer):
         assert 'version' in offer.raw
@@ -46,6 +56,12 @@ class TestAWSOffer(object):
         assert offer._generate_reverse_sku_mapping(
             'instanceType', 'operatingSystem', 'tenancy'
         ) == {'c4.large|Linux|Shared': BASIC_EC2_OFFER_SKU}
+
+    def test_bare_metal_included(self, bare_metal_offer):
+        assert bare_metal_offer._generate_reverse_sku_mapping(
+            'instanceType', 'operatingSystem', 'tenancy',
+            product_families=['Compute Instance (bare metal)']
+        ) == {'i3.metal|Windows|Shared': BARE_METAL_EC2_SKU}
 
     def test_generate_reverse_sku_mapping_collision(self, offer):
         collision_sku = 'collision_sku'

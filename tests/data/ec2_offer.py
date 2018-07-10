@@ -381,3 +381,42 @@ BASIC_EC2_OFFER_DATA = {
         }
     }
 }
+
+
+BARE_METAL_EC2_SKU = 'SBVNSX4BKU246KVM'
+
+
+BARE_METAL_EC2_OFFER = {
+    'offerCode': 'AmazonEC2',
+    'version': '20161213014831',
+    'products': {
+        "SBVNSX4BKU246KVM": {
+            "productFamily": "Compute Instance (bare metal)",
+             "sku": "SBVNSX4BKU246KVM",
+             "attributes": {
+                 "servicename": "Amazon Elastic Compute Cloud",
+                 "preInstalledSw": "SQL Ent",
+                 "normalizationSizeFactor": "128",
+                 "ecu": "208",
+                 "capacitystatus": "Used",
+                 "operation": "RunInstances:0102",
+                 "physicalProcessor": "Intel Xeon E5-2686 v4 (Broadwell)",
+                 "vcpu": "72",
+                 "instanceFamily": "Storage optimized",
+                 "currentGeneration": "Yes",
+                 "instanceType": "i3.metal",
+                 "locationType": "AWS Region",
+                 "location": "EU (Ireland)",
+                 "servicecode": "AmazonEC2",
+                 "memory": "512 GiB",
+                 "storage": "8 x 1900 NVMe SSD",
+                 "networkPerformance": "25 Gigabit",
+                 "processorArchitecture": "64-bit",
+                 "tenancy": "Shared",
+                 "operatingSystem": "Windows",
+                 "licenseModel": "No License required",
+                 "usagetype": "EU-BoxUsage:i3.metal"
+             },
+        }
+    }
+}
