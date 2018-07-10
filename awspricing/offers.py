@@ -88,7 +88,7 @@ class AWSOffer(object):
         return region
 
     @staticmethod
-    def hash_attributes(*attributes):  # type: (*str) -> str
+    def hash_attributes(*attributes):  # type: (*Any) -> str
         """Generate a hash for attributes to use in reverse mappings."""
         return '|'.join(attributes)
 
@@ -262,7 +262,7 @@ class EC2Offer(AWSOffer):
         return hourly
 
     def _get_reserved_offer_term(self, sku, term_attributes):
-        # type: (str, List[str]) -> Dict[str, Any]
+        # type: (str, List[Optional[str]]) -> Dict[str, Any]
         term_attributes_hash = self.hash_attributes(*term_attributes)
         all_terms = self._offer_data['terms']['Reserved'][sku]
         sku_terms = self._reserved_terms_to_offer_term_code[sku]
@@ -330,9 +330,9 @@ class EC2Offer(AWSOffer):
 
     @classmethod
     def _validate_reserved_price_args(cls,
-                                      lease_contract_length,  # type: str
-                                      offering_class,         # type: str
-                                      purchase_option,        # type: str
+                                      lease_contract_length,  # type: Optional[str]
+                                      offering_class,         # type: Optional[str]
+                                      purchase_option,        # type: Optional[str]
                                       ):
         # type: (...) -> None
         if lease_contract_length not in EC2_LEASE_CONTRACT_LENGTH.values():
@@ -486,7 +486,7 @@ class RDSOffer(AWSOffer):
         return hourly
 
     def _get_reserved_offer_term(self, sku, term_attributes):
-        # type: (str, List[str]) -> Dict[str, Any]
+        # type: (str, List[Optional[str]]) -> Dict[str, Any]
         term_attributes_hash = self.hash_attributes(*term_attributes)
         all_terms = self._offer_data['terms']['Reserved'][sku]
         sku_terms = self._reserved_terms_to_offer_term_code[sku]
@@ -554,9 +554,9 @@ class RDSOffer(AWSOffer):
 
     @classmethod
     def _validate_reserved_price_args(cls,
-                                      lease_contract_length,  # type: str
+                                      lease_contract_length,  # type: Optional[str]
                                       offering_class,         # type: str
-                                      purchase_option,        # type: str
+                                      purchase_option,        # type: Optional[str]
                                       ):
         # type: (...) -> None
         if lease_contract_length not in RDS_LEASE_CONTRACT_LENGTH.values():
