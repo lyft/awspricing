@@ -228,6 +228,11 @@ class EC2Offer(AWSOffer):
         # type: (...) -> float
         self._validate_reserved_price_args(
             lease_contract_length, offering_class, purchase_option)
+
+        assert lease_contract_length is not None
+        assert offering_class is not None
+        assert purchase_option is not None
+
         sku = self.get_sku(
             instance_type,
             operating_system=operating_system,
@@ -307,6 +312,11 @@ class EC2Offer(AWSOffer):
         # type: (...) -> float
         self._validate_reserved_price_args(
             lease_contract_length, offering_class, purchase_option)
+
+        assert lease_contract_length is not None
+        assert offering_class is not None
+        assert purchase_option is not None
+
         sku = self.get_sku(
             instance_type,
             operating_system=operating_system,
@@ -332,9 +342,9 @@ class EC2Offer(AWSOffer):
 
     @classmethod
     def _validate_reserved_price_args(cls,
-                                      lease_contract_length,  # type: str
-                                      offering_class,         # type: str
-                                      purchase_option,        # type: str
+                                      lease_contract_length,  # type: Optional[str]
+                                      offering_class,         # type: Optional[str]
+                                      purchase_option,        # type: Optional[str]
                                       ):
         # type: (...) -> None
         if lease_contract_length not in EC2_LEASE_CONTRACT_LENGTH.values():
@@ -385,12 +395,12 @@ class RDSOffer(AWSOffer):
         )
 
         # Lazily-loaded cache to hold offerTermCodes within a SKU
-        self._reserved_terms_to_offer_term_code = defaultdict(dict)
+        self._reserved_terms_to_offer_term_code = defaultdict(dict)  # type: Dict[str, Dict]
 
     def get_sku(self,
                 instance_type,               # type: str
                 database_engine,             # type: str
-                license_model=None,          # type: str
+                license_model=None,          # type: Optional[str]
                 deployment_option=None,      # type: Optional[str]
                 database_edition=None,       # type: Optional[str]
                 region=None                  # type: Optional[str]
@@ -398,8 +408,11 @@ class RDSOffer(AWSOffer):
         region = self._normalize_region(region)
         deployment_option = deployment_option or self.default_deployment_option
 
+        if license_model is None:
+            raise ValueError("License model is required")
+
         attributes = [instance_type, database_engine,
-                      deployment_option, license_model, region]
+                      deployment_option, license_model, region]  # type: List[str]
 
         if database_edition is not None:
             attributes.append(database_edition)
@@ -452,6 +465,11 @@ class RDSOffer(AWSOffer):
         # type: (...) -> float
         self._validate_reserved_price_args(
             lease_contract_length, offering_class, purchase_option)
+
+        assert lease_contract_length is not None
+        assert offering_class is not None
+        assert purchase_option is not None
+
         sku = self.get_sku(
             instance_type,
             database_engine,
@@ -531,6 +549,11 @@ class RDSOffer(AWSOffer):
         # type: (...) -> float
         self._validate_reserved_price_args(
             lease_contract_length, offering_class, purchase_option)
+
+        assert lease_contract_length is not None
+        assert offering_class is not None
+        assert purchase_option is not None
+
         sku = self.get_sku(
             instance_type,
             database_engine,
@@ -556,9 +579,9 @@ class RDSOffer(AWSOffer):
 
     @classmethod
     def _validate_reserved_price_args(cls,
-                                      lease_contract_length,  # type: str
+                                      lease_contract_length,  # type: Optional[str]
                                       offering_class,         # type: str
-                                      purchase_option,        # type: str
+                                      purchase_option,        # type: Optional[str]
                                       ):
         # type: (...) -> None
         if lease_contract_length not in RDS_LEASE_CONTRACT_LENGTH.values():
