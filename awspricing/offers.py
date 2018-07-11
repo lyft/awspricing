@@ -88,7 +88,7 @@ class AWSOffer(object):
         return region
 
     @staticmethod
-    def hash_attributes(*attributes):  # type: (*Any) -> str
+    def hash_attributes(*attributes):  # type: (*str) -> str
         """Generate a hash for attributes to use in reverse mappings."""
         return '|'.join(attributes)
 
@@ -226,6 +226,11 @@ class EC2Offer(AWSOffer):
         # type: (...) -> float
         self._validate_reserved_price_args(
             lease_contract_length, offering_class, purchase_option)
+
+        assert lease_contract_length is not None
+        assert offering_class is not None
+        assert purchase_option is not None
+
         sku = self.get_sku(
             instance_type,
             operating_system=operating_system,
@@ -262,7 +267,7 @@ class EC2Offer(AWSOffer):
         return hourly
 
     def _get_reserved_offer_term(self, sku, term_attributes):
-        # type: (str, List[Optional[str]]) -> Dict[str, Any]
+        # type: (str, List[str]) -> Dict[str, Any]
         term_attributes_hash = self.hash_attributes(*term_attributes)
         all_terms = self._offer_data['terms']['Reserved'][sku]
         sku_terms = self._reserved_terms_to_offer_term_code[sku]
@@ -305,6 +310,11 @@ class EC2Offer(AWSOffer):
         # type: (...) -> float
         self._validate_reserved_price_args(
             lease_contract_length, offering_class, purchase_option)
+
+        assert lease_contract_length is not None
+        assert offering_class is not None
+        assert purchase_option is not None
+
         sku = self.get_sku(
             instance_type,
             operating_system=operating_system,
@@ -383,12 +393,12 @@ class RDSOffer(AWSOffer):
         )
 
         # Lazily-loaded cache to hold offerTermCodes within a SKU
-        self._reserved_terms_to_offer_term_code = defaultdict(dict)
+        self._reserved_terms_to_offer_term_code = defaultdict(dict)  # type: Dict[str, Dict]
 
     def get_sku(self,
                 instance_type,               # type: str
                 database_engine,             # type: str
-                license_model=None,          # type: str
+                license_model=None,          # type: Optional[str]
                 deployment_option=None,      # type: Optional[str]
                 database_edition=None,       # type: Optional[str]
                 region=None                  # type: Optional[str]
@@ -396,8 +406,11 @@ class RDSOffer(AWSOffer):
         region = self._normalize_region(region)
         deployment_option = deployment_option or self.default_deployment_option
 
+        if license_model is None:
+            raise ValueError("License model is required")
+
         attributes = [instance_type, database_engine,
-                      deployment_option, license_model, region]
+                      deployment_option, license_model, region]  # type: List[str]
 
         if database_edition is not None:
             attributes.append(database_edition)
@@ -450,6 +463,11 @@ class RDSOffer(AWSOffer):
         # type: (...) -> float
         self._validate_reserved_price_args(
             lease_contract_length, offering_class, purchase_option)
+
+        assert lease_contract_length is not None
+        assert offering_class is not None
+        assert purchase_option is not None
+
         sku = self.get_sku(
             instance_type,
             database_engine,
@@ -486,7 +504,7 @@ class RDSOffer(AWSOffer):
         return hourly
 
     def _get_reserved_offer_term(self, sku, term_attributes):
-        # type: (str, List[Optional[str]]) -> Dict[str, Any]
+        # type: (str, List[str]) -> Dict[str, Any]
         term_attributes_hash = self.hash_attributes(*term_attributes)
         all_terms = self._offer_data['terms']['Reserved'][sku]
         sku_terms = self._reserved_terms_to_offer_term_code[sku]
@@ -529,6 +547,11 @@ class RDSOffer(AWSOffer):
         # type: (...) -> float
         self._validate_reserved_price_args(
             lease_contract_length, offering_class, purchase_option)
+
+        assert lease_contract_length is not None
+        assert offering_class is not None
+        assert purchase_option is not None
+
         sku = self.get_sku(
             instance_type,
             database_engine,
