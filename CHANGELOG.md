@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.4
+
+ * Include bare metal instance offers for EC2 (#19)
+
 ## 1.1.3
 
  * Fix a bug with the case of dimension units (#16)
