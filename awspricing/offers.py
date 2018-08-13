@@ -197,16 +197,19 @@ class EC2Offer(AWSOffer):
                         license_model=None,          # type: Optional[str]
                         preinstalled_software=None,  # type: Optional[str]
                         region=None,                 # type: Optional[str]
+                        sku=None,                    # type: Optional[str]
                         ):
         # type: (...) -> float
-        sku = self.get_sku(
-            instance_type,
-            operating_system=operating_system,
-            tenancy=tenancy,
-            license_model=license_model,
-            preinstalled_software=preinstalled_software,
-            region=region
-        )
+
+        if sku is None:
+            sku = self.get_sku(
+                instance_type,
+                operating_system=operating_system,
+                tenancy=tenancy,
+                license_model=license_model,
+                preinstalled_software=preinstalled_software,
+                region=region
+            )
         term = self._offer_data['terms']['OnDemand'][sku]
         price_dimensions = next(six.itervalues(term))['priceDimensions']
         price_dimension = next(six.itervalues(price_dimensions))
@@ -224,6 +227,7 @@ class EC2Offer(AWSOffer):
                         purchase_option=None,                        # type: Optional[str]
                         amortize_upfront=True,                       # type: bool
                         region=None,                                 # type: Optional[str]
+                        sku=None,                                    # type: Optional[str]
                         ):
         # type: (...) -> float
         self._validate_reserved_price_args(
@@ -233,14 +237,15 @@ class EC2Offer(AWSOffer):
         assert offering_class is not None
         assert purchase_option is not None
 
-        sku = self.get_sku(
-            instance_type,
-            operating_system=operating_system,
-            tenancy=tenancy,
-            license_model=license_model,
-            preinstalled_software=preinstalled_software,
-            region=region,
-        )
+        if sku is None:
+            sku = self.get_sku(
+                instance_type,
+                operating_system=operating_system,
+                tenancy=tenancy,
+                license_model=license_model,
+                preinstalled_software=preinstalled_software,
+                region=region,
+            )
 
         term_attributes = [
             lease_contract_length,
@@ -308,6 +313,7 @@ class EC2Offer(AWSOffer):
                          offering_class=EC2_OFFERING_CLASS.STANDARD,  # type: str
                          purchase_option=None,                        # type: Optional[str]
                          region=None,                                 # type: Optional[str]
+                         sku=None,                                    # type: Optional[str]
                          ):
         # type: (...) -> float
         self._validate_reserved_price_args(
@@ -317,14 +323,15 @@ class EC2Offer(AWSOffer):
         assert offering_class is not None
         assert purchase_option is not None
 
-        sku = self.get_sku(
-            instance_type,
-            operating_system=operating_system,
-            tenancy=tenancy,
-            license_model=license_model,
-            preinstalled_software=preinstalled_software,
-            region=region,
-        )
+        if sku is None:
+            sku = self.get_sku(
+                instance_type,
+                operating_system=operating_system,
+                tenancy=tenancy,
+                license_model=license_model,
+                preinstalled_software=preinstalled_software,
+                region=region,
+            )
 
         term_attributes = [
             lease_contract_length,
@@ -433,17 +440,20 @@ class RDSOffer(AWSOffer):
                         license_model=None,          # type: str
                         deployment_option=None,      # type: Optional[str]
                         database_edition=None,       # type: Optional[str]
-                        region=None                  # type: Optional[str]
+                        region=None,                 # type: Optional[str]
+                        sku=None,                    # type: Optional[str]
                         ):
         # type: (...) -> float
-        sku = self.get_sku(
-            instance_type,
-            database_engine,
-            deployment_option=deployment_option,
-            license_model=license_model,
-            database_edition=database_edition,
-            region=region
-        )
+
+        if sku is None
+            sku = self.get_sku(
+                instance_type,
+                database_engine,
+                deployment_option=deployment_option,
+                license_model=license_model,
+                database_edition=database_edition,
+                region=region
+            )
         term = self._offer_data['terms']['OnDemand'][sku]
         price_dimensions = next(six.itervalues(term))['priceDimensions']
         price_dimension = next(six.itervalues(price_dimensions))
@@ -461,6 +471,7 @@ class RDSOffer(AWSOffer):
                         amortize_upfront=True,                       # type: bool
                         database_edition=None,                       # type: Optional[str]
                         region=None,                                 # type: Optional[str]
+                        sku=None,                                    # type: Optional[str]
                         ):
         # type: (...) -> float
         self._validate_reserved_price_args(
@@ -470,14 +481,15 @@ class RDSOffer(AWSOffer):
         assert offering_class is not None
         assert purchase_option is not None
 
-        sku = self.get_sku(
-            instance_type,
-            database_engine,
-            deployment_option=deployment_option,
-            license_model=license_model,
-            database_edition=database_edition,
-            region=region,
-        )
+        if sku is None:
+            sku = self.get_sku(
+                instance_type,
+                database_engine,
+                deployment_option=deployment_option,
+                license_model=license_model,
+                database_edition=database_edition,
+                region=region,
+            )
 
         term_attributes = [
             lease_contract_length,
@@ -543,8 +555,9 @@ class RDSOffer(AWSOffer):
                          lease_contract_length=None,                  # type: Optional[str]
                          offering_class=RDS_OFFERING_CLASS.STANDARD,  # type: str
                          purchase_option=None,                        # type: Optional[str]
-                         database_edition=None,                        # type: Optional[str]
+                         database_edition=None,                       # type: Optional[str]
                          region=None,                                 # type: Optional[str]
+                         sku=None,                                    # type: Optional[str]
                          ):
         # type: (...) -> float
         self._validate_reserved_price_args(
@@ -554,7 +567,8 @@ class RDSOffer(AWSOffer):
         assert offering_class is not None
         assert purchase_option is not None
 
-        sku = self.get_sku(
+        if sku is None:
+            sku = self.get_sku(
             instance_type,
             database_engine,
             deployment_option=deployment_option,
