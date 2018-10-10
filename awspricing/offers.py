@@ -329,8 +329,6 @@ class EC2Offer(AWSOffer):
             for term_sku, term in six.iteritems(all_terms):
                 hashed = self._hash_reserved_term_attributes(term)
                 sku_terms[hashed] = term['offerTermCode']
-        if (term_attributes_hash not in sku_terms):
-            return -1
         code = sku_terms[term_attributes_hash]
         return all_terms['.'.join([sku, code])]
 
