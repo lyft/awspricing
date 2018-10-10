@@ -299,7 +299,7 @@ class EC2Offer(AWSOffer):
         ]
         term = self._get_reserved_offer_term(sku, term_attributes)
 
-        if term is -1:
+        if term is -1 or not term:
             return -1
         price_dimensions = term['priceDimensions'].values()
         hourly_dimension = next(d for d in price_dimensions
@@ -329,6 +329,8 @@ class EC2Offer(AWSOffer):
             for term_sku, term in six.iteritems(all_terms):
                 hashed = self._hash_reserved_term_attributes(term)
                 sku_terms[hashed] = term['offerTermCode']
+        if (term_attributes_hash not in sku_terms):
+            return {}
         code = sku_terms[term_attributes_hash]
         return all_terms['.'.join([sku, code])]
 
