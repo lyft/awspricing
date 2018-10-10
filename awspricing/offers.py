@@ -213,6 +213,54 @@ class EC2Offer(AWSOffer):
         raw_price = price_dimension['pricePerUnit']['USD']
         return float(raw_price)
 
+    def reserved_hourly_combinations(
+                        self,
+                        instance_type,                               # type: str
+                        operating_system=None,                       # type: Optional[str]
+                        tenancy=None,                                # type: Optional[str]
+                        license_model=None,                          # type: Optional[str]
+                        preinstalled_software=None,                  # type: Optional[str]
+                        amortize_upfront=True,                       # type: bool
+                        ):
+
+        # It seems like these were the only options that were valid.
+        # lease_contract_lengths = ["1yr"]
+        # purchase_options = ["No Upfront", "Partial Upfront"]
+        _EC2_LEASE_CONTRACT_LENGTH = ['1yr', '3yr']
+        _EC2_OFFERING_CLASS = ['standard', 'convertible']
+        _EC2_PURCHASE_OPTION = ['No Upfront', 'Partial Upfront', 'All Upfront']
+        combinations = []
+        for region in REGION_SHORTS:
+            for offering_class in _EC2_OFFERING_CLASS:
+                for purchase_option in _EC2_PURCHASE_OPTION:
+                    for lease_contract_length in _EC2_LEASE_CONTRACT_LENGTH:
+                        if (offering_class is "convertible" and lease_contract_length is "1yr"):
+                            # The convertible offering class is not available on a 1 yr lease.
+                            continue
+                        cost = self.reserved_hourly(
+                            instance_type,
+                            operating_system,
+                            tenancy,
+                            license_model,
+                            preinstalled_software,
+                            lease_contract_length,
+                            offering_class,
+                            purchase_option,
+                            amortize_upfront,
+                            region
+                        )
+                        if cost is -1:
+                            continue
+                        d = {
+                            'cost': cost,
+                            'region': region,
+                            'offering class': offering_class,
+                            'purchase_option': purchase_option,
+                            'lease contract length': lease_contract_length
+                         }
+                        combinations.extend([d])
+        return combinations
+
     def reserved_hourly(self,
                         instance_type,                               # type: str
                         operating_system=None,                       # type: Optional[str]
@@ -232,15 +280,17 @@ class EC2Offer(AWSOffer):
         assert lease_contract_length is not None
         assert offering_class is not None
         assert purchase_option is not None
-
-        sku = self.get_sku(
-            instance_type,
-            operating_system=operating_system,
-            tenancy=tenancy,
-            license_model=license_model,
-            preinstalled_software=preinstalled_software,
-            region=region,
-        )
+        try:
+            sku = self.get_sku(
+                instance_type,
+                operating_system=operating_system,
+                tenancy=tenancy,
+                license_model=license_model,
+                preinstalled_software=preinstalled_software,
+                region=region,
+            )
+        except(ValueError):
+            return -1
 
         term_attributes = [
             lease_contract_length,
@@ -249,6 +299,8 @@ class EC2Offer(AWSOffer):
         ]
         term = self._get_reserved_offer_term(sku, term_attributes)
 
+        if term is -1:
+            return -1
         price_dimensions = term['priceDimensions'].values()
         hourly_dimension = next(d for d in price_dimensions
                                 if d['unit'].lower() == 'hrs')
@@ -277,7 +329,8 @@ class EC2Offer(AWSOffer):
             for term_sku, term in six.iteritems(all_terms):
                 hashed = self._hash_reserved_term_attributes(term)
                 sku_terms[hashed] = term['offerTermCode']
-
+        if (term_attributes_hash not in sku_terms):
+            return -1
         code = sku_terms[term_attributes_hash]
         return all_terms['.'.join([sku, code])]
 
@@ -514,7 +567,6 @@ class RDSOffer(AWSOffer):
             for term_sku, term in six.iteritems(all_terms):
                 hashed = self._hash_reserved_term_attributes(term)
                 sku_terms[hashed] = term['offerTermCode']
-
         code = sku_terms[term_attributes_hash]
         return all_terms['.'.join([sku, code])]
 
