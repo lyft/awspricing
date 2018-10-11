@@ -45,6 +45,17 @@ Usage
       'c4.large'
     ) # [{'cost': 0.063, 'region': 'us-east-1', 'offering class': 'standard', 'purchase_option': 'No Upfront', 'lease_contract_length': '1yr'}, ...]
 
+    ec2_offer.reserved_hourly_combinations_kthclosest(
+        ec2_offer.reserved_hourly_combinations('c4.large'),
+        1
+    ) # {
+            'cost': 0.05401674277016742, 
+            'region': 'us-east-1', 
+            'offering class': 'convertible', 
+            'purchase_option': 'Partial Upfront', 
+            'lease contract length': '3yr'
+        } 
+
     rds_offer = awspricing.offer('AmazonRDS')
 
     rds_offer.search_skus(
