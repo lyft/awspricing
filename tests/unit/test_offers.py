@@ -114,6 +114,29 @@ class TestEC2Offer(object):
             purchase_option=EC2_PURCHASE_OPTION.NO_UPFRONT,
         ) == 0.063
 
+    def test_reserved_hourly_kthclosest_0(self, offer, new_format_offer):
+        assert offer.reserved_hourly_combinations_kthclosest(
+            offer.reserved_hourly_combinations('c4.large'),
+            0
+        ) == {
+            'cost': 0.04150989345509894,
+            'region': 'us-east-1',
+            'offering class': 'standard',
+            'purchase_option': 'Partial Upfront',
+            'lease contract length': '3yr'
+        }  
+    def test_reserved_hourly_kthclosest_1(self, offer, new_format_offer):
+        assert offer.reserved_hourly_combinations_kthclosest(
+            offer.reserved_hourly_combinations('c4.large'),
+            1
+        ) == {
+            'cost': 0.05401674277016742, 
+            'region': 'us-east-1', 
+            'offering class': 'convertible', 
+            'purchase_option': 'Partial Upfront', 
+            'lease contract length': '3yr'
+        } 
+
     def test_reserved_hourly_no_upfront_combination(self, offer, new_format_offer):
         assert offer.reserved_hourly_combinations(
             'c4.large'

@@ -1,5 +1,6 @@
 from collections import defaultdict
 import logging
+from random import randrange
 
 from typing import Any, Dict, List, Optional, Set, Type  # noqa
 
@@ -212,6 +213,45 @@ class EC2Offer(AWSOffer):
         price_dimension = next(six.itervalues(price_dimensions))
         raw_price = price_dimension['pricePerUnit']['USD']
         return float(raw_price)
+
+    def partition(self, x, pivot_index=0):
+        i = 0
+        if pivot_index != 0:
+            x[0], x[pivot_index] = x[pivot_index], x[0]
+        for j in range(len(x)-1):
+            if x[j+1] < x[0]:
+                x[j+1], x[i+1] = x[i+1], x[j+1]
+                i += 1
+        x[0], x[i] = x[i], x[0]
+        return x, i
+
+    def select(self, x, k):
+        if k > len(x) - 1:
+            raise ValueError('Cannot find kth smallest that\'s larger than input array')
+            return -1
+        elif len(x) == 1:
+            return x[0]
+        else:
+            xpart = self.partition(x, randrange(len(x)))
+            x = xpart[0]  # partitioned array
+            j = xpart[1]  # pivot index
+            if j == k:
+                return x[j]
+            elif j > k:
+                return self.select(x[:j], k)
+            else:
+                k = k - j - 1
+                return self.select(x[(j+1):], k)
+
+    # this function takes as input the output of function reserved_hourly_combinations.
+    def reserved_hourly_combinations_kthclosest(
+                        self,
+                        combinations,                               # type: Dict
+                        k                                           # type: int
+                        ):
+        costs = [o['cost'] for o in combinations]
+        kth_closest_cost = self.select(costs, k)
+        return [c for c in combinations if kth_closest_cost in c.values()][0]
 
     def reserved_hourly_combinations(
                         self,
