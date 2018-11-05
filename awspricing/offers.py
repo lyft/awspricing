@@ -149,10 +149,11 @@ class EC2Offer(AWSOffer):
         self.default_tenancy = 'Shared'
         self.default_license_model = 'No License required'
         self.default_preinstalled_software = 'NA'
+        self.default_capacity_status = 'Used'
 
         self._reverse_sku = self._generate_reverse_sku_mapping(
             'instanceType', 'operatingSystem', 'tenancy', 'licenseModel',
-            'preInstalledSw', 'location',
+            'preInstalledSw', 'location', 'capacitystatus',
             # Both families are queried assuming that instance names will never clash between
             # them. This should be true given metal instance naming conventions thus far (instance
             # size is 'metal').
@@ -168,7 +169,8 @@ class EC2Offer(AWSOffer):
                 tenancy=None,                # type: Optional[str]
                 license_model=None,          # type: Optional[str]
                 preinstalled_software=None,  # type: Optional[str]
-                region=None                  # type: Optional[str]
+                region=None,                 # type: Optional[str]
+                capacity_status=None         # type: Optional[str]
                 ):
         # type: (...) -> str
         region = self._normalize_region(region)
@@ -177,9 +179,10 @@ class EC2Offer(AWSOffer):
         license_model = license_model or self.default_license_model
         preinstalled_software = (preinstalled_software or
                                  self.default_preinstalled_software)
+        capacity_status = capacity_status or self.default_capacity_status
 
         attributes = [instance_type, operating_system, tenancy, license_model,
-                      preinstalled_software, region]
+                      preinstalled_software, region, capacity_status]
         if not all(attributes):
             raise ValueError("All attributes are required: {}"
                              .format(attributes))
@@ -197,6 +200,7 @@ class EC2Offer(AWSOffer):
                         license_model=None,          # type: Optional[str]
                         preinstalled_software=None,  # type: Optional[str]
                         region=None,                 # type: Optional[str]
+                        capacity_status=None         # type: Optional[str]
                         ):
         # type: (...) -> float
         sku = self.get_sku(
@@ -205,7 +209,8 @@ class EC2Offer(AWSOffer):
             tenancy=tenancy,
             license_model=license_model,
             preinstalled_software=preinstalled_software,
-            region=region
+            region=region,
+            capacity_status=capacity_status
         )
         term = self._offer_data['terms']['OnDemand'][sku]
         price_dimensions = next(six.itervalues(term))['priceDimensions']
