@@ -210,7 +210,7 @@ class EC2Offer(AWSOffer):
             license_model=license_model,
             preinstalled_software=preinstalled_software,
             region=region,
-            capacity_status = capacity_status
+            capacity_status=capacity_status
         )
         term = self._offer_data['terms']['OnDemand'][sku]
         price_dimensions = next(six.itervalues(term))['priceDimensions']
