@@ -229,7 +229,7 @@ class EC2Offer(AWSOffer):
                         purchase_option=None,                        # type: Optional[str]
                         amortize_upfront=True,                       # type: bool
                         region=None,                                 # type: Optional[str]
-                        capacity_status=None,                                 # type: Optional[str]
+                        capacity_status=None,                        # type: Optional[str]
                         ):
         # type: (...) -> float
         self._validate_reserved_price_args(
