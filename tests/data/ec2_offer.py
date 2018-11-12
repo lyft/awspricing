@@ -30,7 +30,8 @@ BASIC_EC2_OFFER_MODIFIED_FORMAT = {
                 'dedicatedEbsThroughput' : '500 Mbps',
                 'enhancedNetworkingSupported' : 'Yes',
                 'preInstalledSw' : 'NA',
-                'processorFeatures' : 'Intel AVX; Intel AVX2; Intel Turbo'
+                'processorFeatures' : 'Intel AVX; Intel AVX2; Intel Turbo',
+                'capacitystatus': 'Used'
             }
         },
         'BNSJSY9CBT29VNPD':{
@@ -207,6 +208,7 @@ BASIC_EC2_OFFER_DATA = {
             'sku' : '4C7N4APU9GEUZ6H6',
             'productFamily' : 'Compute Instance',
             'attributes' : {
+                'capacitystatus': 'Used',
                 'servicecode' : 'AmazonEC2',
                 'location' : 'US East (N. Virginia)',
                 'locationType' : 'AWS Region',
