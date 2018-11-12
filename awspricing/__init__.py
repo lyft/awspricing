@@ -6,7 +6,7 @@ from .offers import AWSOffer, get_offer_class  # noqa
 from .cache import maybe_read_from_cache, maybe_write_to_cache
 
 
-__version__ = "1.1.4"
+__version__ = "1.1.5"
 
 
 session = requests.Session()
