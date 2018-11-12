@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.5
+
+ * Add capacitystatus attribute for EC2 (#29)
+
 ## 1.1.4
 
  * Include bare metal instance offers for EC2 (#19)
