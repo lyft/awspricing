@@ -213,6 +213,7 @@ BASIC_EC2_OFFER_DATA = {
                 'instanceType' : 'c4.large',
                 'currentGeneration' : 'Yes',
                 'instanceFamily' : 'Compute optimized',
+                'capacitystatus' : 'Used',
                 'vcpu' : '2',
                 'physicalProcessor' : 'Intel Xeon E5-2666 v3 (Haswell)',
                 'clockSpeed' : '2.9 GHz',
