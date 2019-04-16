@@ -2,7 +2,9 @@
 awspricing
 ==========
 
-A Python library for working with the `AWS Price List API <http://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/price-changes.html>`_.
+A Python library for working with the `AWS Price List Query API <https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/pricing.html>`_.
+
+Note that this requires Price List Query API IAM roles: https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/billing-permissions-ref.html#example-policy-pe-api
 
 Features:
 
