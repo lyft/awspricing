@@ -24,10 +24,6 @@ class TestAWSOffer(object):
     def bare_metal_offer(self):
         return AWSOffer(BARE_METAL_EC2_OFFER)
 
-    def test_raw(self, offer):
-        assert 'version' in offer.raw
-        assert 'products' in offer.raw
-
     def test_pythonify_attributes(self):
         attrs = {'instance_type': 'c4.large', 'currentGeneration': 'Yes'}
         expected = {'instanceType': 'c4.large', 'currentGeneration': 'Yes'}
@@ -70,7 +66,9 @@ class TestAWSOffer(object):
         offer._offer_data = copy.deepcopy(offer.raw)
 
         # Add an identical product (in terms of attributes) with a different SKU
-        offer.raw['products'][collision_sku] = offer.raw['products'][BASIC_EC2_OFFER_SKU]
+        collision_product = copy.deepcopy(offer.raw[0])
+        collision_product['product']['sku'] = collision_sku
+        offer.raw.append(collision_product)
 
         assert offer._generate_reverse_sku_mapping(
             'instanceType', 'operatingSystem', 'tenancy'
