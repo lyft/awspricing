@@ -103,6 +103,19 @@ class TestEC2Offer(object):
             location='US East (N. Virginia)',
         ) == {BASIC_EC2_OFFER_SKU}
 
+    def test_on_demand_hourly(self, offer, new_format_offer):
+        assert offer.ondemand_hourly(
+            'c4.large',
+            operating_system='Linux',
+            region='us-east-1',
+        ) == .1
+
+        assert new_format_offer.ondemand_hourly(
+            'c4.large',
+            operating_system='Linux',
+            region='us-east-1',
+        ) == .1
+
 
     def test_reserved_hourly_no_upfront(self, offer, new_format_offer):
         assert offer.reserved_hourly(

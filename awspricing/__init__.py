@@ -1,6 +1,6 @@
-from typing import Dict, Type, List  # noqa
+from typing import Dict, Type, List
 import boto3
-import ast
+import json
 import datetime
 
 from .offers import AWSOffer, get_offer_class  # noqa
@@ -14,7 +14,6 @@ service_list = []  # type: List[str]
 
 client = boto3.client('pricing', region_name='us-east-1')
 
-DEFAULT_AWS_PRODUCTS = ['AmazonEC2', 'AmazonRDS']
 TIME_FORMAT = '%b_%y_%Z'  # month, year, and timezone
 
 
@@ -23,9 +22,6 @@ def _fetch_offers():
     offers = maybe_read_from_cache(cache_key)
     if offers is not None:
         return offers
-
-    for product in DEFAULT_AWS_PRODUCTS:
-        _fetch_offer(product)
 
     maybe_write_to_cache(cache_key, offers)
     return offers
@@ -38,10 +34,12 @@ def _get_services():
     return service_list
 
 
-def _fetch_offer(offer_name, version=datetime.datetime.now().strftime(TIME_FORMAT)):
+def _fetch_offer(offer_name, version=None):
     services = _get_services()
     if offer_name not in services:
         raise ValueError('Unknown offer name, no corresponding AWS Service: {}'.format(offer_name))
+    if not version:
+        datetime.datetime.utcnow().strftime(TIME_FORMAT)
 
     cache_key = 'offer_{}_{}'.format(offer_name, version)
     offer = maybe_read_from_cache(cache_key)
@@ -53,7 +51,7 @@ def _fetch_offer(offer_name, version=datetime.datetime.now().strftime(TIME_FORMA
     offer = []
     for page in resp_pages:
         for product in page['PriceList']:
-            offer.append(ast.literal_eval(product))
+            offer.append(json.loads(product))
 
     maybe_write_to_cache(cache_key, offer)
     return offer

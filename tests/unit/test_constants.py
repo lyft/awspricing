@@ -7,7 +7,6 @@ from awspricing.constants import Enum
 class TestEnum(object):
 
     @mock.patch('awspricing.boto3.client')
-
     def test_simple_enum(self, mock_client):
         Color = Enum('red', 'green', 'blue')
 
