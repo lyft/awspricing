@@ -7,7 +7,7 @@ from .offers import AWSOffer, get_offer_class  # noqa
 from .cache import maybe_read_from_cache, maybe_write_to_cache
 
 
-__version__ = "1.1.5"
+__version__ = "2.0.0"
 
 _SERVICES = {}  # type: Dict[str, Type[AWSOffer]]
 service_list = []  # type: List[str]
@@ -39,7 +39,7 @@ def _fetch_offer(offer_name, version=None):
     if offer_name not in services:
         raise ValueError('Unknown offer name, no corresponding AWS Service: {}'.format(offer_name))
     if not version:
-        datetime.datetime.utcnow().strftime(TIME_FORMAT)
+        version = datetime.datetime.utcnow().strftime(TIME_FORMAT)
 
     cache_key = 'offer_{}_{}'.format(offer_name, version)
     offer = maybe_read_from_cache(cache_key)
@@ -63,7 +63,7 @@ def all_services_names():
     return services
 
 
-def offer(service_name, version=datetime.datetime.now().strftime(TIME_FORMAT)):
+def offer(service_name, version=None):
     if service_name not in _SERVICES:
         offer_data = _fetch_offer(service_name, version=version)
         _SERVICES[service_name] = get_offer_class(service_name)(offer_data)

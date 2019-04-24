@@ -24,6 +24,12 @@ class TestAWSOffer(object):
     def bare_metal_offer(self):
         return AWSOffer(BARE_METAL_EC2_OFFER)
 
+    def test_raw(self, offer):
+        raw_offer_sku = '4C7N4APU9GEUZ6H6'
+        for item in offer.raw:
+            assert item['serviceCode'] == 'AmazonEC2'
+            assert item['product']['sku'] == raw_offer_sku
+
     def test_pythonify_attributes(self):
         attrs = {'instance_type': 'c4.large', 'currentGeneration': 'Yes'}
         expected = {'instanceType': 'c4.large', 'currentGeneration': 'Yes'}

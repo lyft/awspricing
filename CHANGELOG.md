@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.0.0
+
+ * Migrate to use AWS Price List query API instead of offer files.
+ * Pricing data now pulled lazily by AWS product
+
 ## 1.1.5
 
  * Add capacitystatus attribute for EC2 (#29)
