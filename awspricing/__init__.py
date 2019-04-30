@@ -48,10 +48,12 @@ def _fetch_offer(offer_name, version=None):
 
     paginator = client.get_paginator('get_products')
     resp_pages = paginator.paginate(ServiceCode=offer_name, FormatVersion='aws_v1')
-    offer = []
+    offer = {}
     for page in resp_pages:
         for product in page['PriceList']:
-            offer.append(json.loads(product))
+            product_offer = json.loads(product)
+            sku = product_offer['product']['sku']
+            offer[sku] = product_offer
 
     maybe_write_to_cache(cache_key, offer)
     return offer

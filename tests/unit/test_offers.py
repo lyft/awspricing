@@ -26,7 +26,7 @@ class TestAWSOffer(object):
 
     def test_raw(self, offer):
         raw_offer_sku = '4C7N4APU9GEUZ6H6'
-        for item in offer.raw:
+        for item in offer.raw.values():
             assert item['serviceCode'] == 'AmazonEC2'
             assert item['product']['sku'] == raw_offer_sku
 
@@ -72,9 +72,9 @@ class TestAWSOffer(object):
         offer._offer_data = copy.deepcopy(offer.raw)
 
         # Add an identical product (in terms of attributes) with a different SKU
-        collision_product = copy.deepcopy(offer.raw[0])
+        collision_product = copy.deepcopy(offer.raw.values()[0])
         collision_product['product']['sku'] = collision_sku
-        offer.raw.append(collision_product)
+        offer.raw[collision_sku] = collision_product
 
         assert offer._generate_reverse_sku_mapping(
             'instanceType', 'operatingSystem', 'tenancy'

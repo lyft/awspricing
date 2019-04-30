@@ -1,7 +1,7 @@
 
 BASIC_EC2_OFFER_SKU = '4C7N4APU9GEUZ6H6'
 
-BASIC_EC2_OFFER_MODIFIED_FORMAT = [{
+BASIC_EC2_OFFER_MODIFIED_FORMAT = {'4C7N4APU9GEUZ6H6': {
     'serviceCode': 'AmazonEC2',
     'product': {
         'productFamily': 'Compute Instance',
@@ -176,10 +176,10 @@ BASIC_EC2_OFFER_MODIFIED_FORMAT = [{
             },
         }
     }
-}]
+}}
 
 # Includes one variation of the c4.xlarge product and just Partial Upfront RIs.
-BASIC_EC2_OFFER_DATA = [{
+BASIC_EC2_OFFER_DATA = {'4C7N4APU9GEUZ6H6': {
     'serviceCode': 'AmazonEC2',
     'product': {
         'sku' : '4C7N4APU9GEUZ6H6',
@@ -354,13 +354,13 @@ BASIC_EC2_OFFER_DATA = [{
             },
         }
     }
-}]
+}}
 
 
 BARE_METAL_EC2_SKU = 'SBVNSX4BKU246KVM'
 
 
-BARE_METAL_EC2_OFFER = [{
+BARE_METAL_EC2_OFFER = {'SBVNSX4BKU246KVM': {
     'serviceCode': 'AmazonEC2',
     'product': {
         "productFamily": "Compute Instance (bare metal)",
@@ -390,7 +390,7 @@ BARE_METAL_EC2_OFFER = [{
              "usagetype": "EU-BoxUsage:i3.metal"
          },
     }
-}]
+}}
 
 
 FULL_EC2_SAMPLE_PAGE = {
