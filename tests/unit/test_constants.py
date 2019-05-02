@@ -1,11 +1,13 @@
 import pytest
+import mock
 
 from awspricing.constants import Enum
 
 
 class TestEnum(object):
 
-    def test_simple_enum(self):
+    @mock.patch('awspricing.boto3.client')
+    def test_simple_enum(self, mock_client):
         Color = Enum('red', 'green', 'blue')
 
         assert Color.RED == 'red'

@@ -25,8 +25,10 @@ class TestAWSOffer(object):
         return AWSOffer(BARE_METAL_EC2_OFFER)
 
     def test_raw(self, offer):
-        assert 'version' in offer.raw
-        assert 'products' in offer.raw
+        raw_offer_sku = '4C7N4APU9GEUZ6H6'
+        for item in offer.raw.values():
+            assert item['serviceCode'] == 'AmazonEC2'
+            assert item['product']['sku'] == raw_offer_sku
 
     def test_pythonify_attributes(self):
         attrs = {'instance_type': 'c4.large', 'currentGeneration': 'Yes'}
@@ -70,7 +72,9 @@ class TestAWSOffer(object):
         offer._offer_data = copy.deepcopy(offer.raw)
 
         # Add an identical product (in terms of attributes) with a different SKU
-        offer.raw['products'][collision_sku] = offer.raw['products'][BASIC_EC2_OFFER_SKU]
+        collision_product = copy.deepcopy(list(offer.raw.values())[0])
+        collision_product['product']['sku'] = collision_sku
+        offer.raw[collision_sku] = collision_product
 
         assert offer._generate_reverse_sku_mapping(
             'instanceType', 'operatingSystem', 'tenancy'
@@ -104,6 +108,19 @@ class TestEC2Offer(object):
             instance_type='c4.large',
             location='US East (N. Virginia)',
         ) == {BASIC_EC2_OFFER_SKU}
+
+    def test_on_demand_hourly(self, offer, new_format_offer):
+        assert offer.ondemand_hourly(
+            'c4.large',
+            operating_system='Linux',
+            region='us-east-1',
+        ) == .1
+
+        assert new_format_offer.ondemand_hourly(
+            'c4.large',
+            operating_system='Linux',
+            region='us-east-1',
+        ) == .1
 
 
     def test_reserved_hourly_no_upfront(self, offer, new_format_offer):

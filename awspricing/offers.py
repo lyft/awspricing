@@ -36,7 +36,7 @@ def get_offer_class(offer_name):  # type: (str) -> Type[AWSOffer]
 
 class AWSOffer(object):
     def __init__(self, offer_data):  # type: (Dict[str, Any]) -> None
-        self._offer_data = offer_data
+        self._offer_data = offer_data  # type: Dict[str, Any]
         self.default_region = None  # type: Optional[str]
 
     @property
@@ -55,7 +55,8 @@ class AWSOffer(object):
         """
         attributes = self._pythonify_attributes(attributes)
         result = set()
-        for sku, product in six.iteritems(self._offer_data['products']):
+        for sku, offers in self._offer_data.items():
+            product = offers['product']
             product_attributes = product['attributes']
             all_match = True
             for attr_name, attr_value in six.iteritems(attributes):
@@ -63,7 +64,7 @@ class AWSOffer(object):
                     all_match = False
                     break
             if all_match:
-                result.add(sku)
+                result.add(product['sku'])
         return result
 
     @staticmethod
@@ -113,7 +114,8 @@ class AWSOffer(object):
         # the collision and do not include these products in the mapping.
         attribute_collisions = set()
 
-        for sku, product in six.iteritems(self._offer_data['products']):
+        for sku, offers in self._offer_data.items():
+            product = offers['product']
             # Introduced for Data transfer SKU's that are not like regular EC2 offers
             try:
                 if product_families and product['productFamily'] not in product_families:
@@ -212,7 +214,8 @@ class EC2Offer(AWSOffer):
             region=region,
             capacity_status=capacity_status
         )
-        term = self._offer_data['terms']['OnDemand'][sku]
+        offer = self._offer_data[sku]
+        term = offer['terms']['OnDemand']
         price_dimensions = next(six.itervalues(term))['priceDimensions']
         price_dimension = next(six.itervalues(price_dimensions))
         raw_price = price_dimension['pricePerUnit']['USD']
@@ -278,7 +281,8 @@ class EC2Offer(AWSOffer):
     def _get_reserved_offer_term(self, sku, term_attributes):
         # type: (str, List[str]) -> Dict[str, Any]
         term_attributes_hash = self.hash_attributes(*term_attributes)
-        all_terms = self._offer_data['terms']['Reserved'][sku]
+        offer = self._offer_data[sku]
+        all_terms = offer['terms']['Reserved']
         sku_terms = self._reserved_terms_to_offer_term_code[sku]
         if term_attributes_hash not in sku_terms:
             for term_sku, term in six.iteritems(all_terms):
@@ -453,7 +457,8 @@ class RDSOffer(AWSOffer):
             database_edition=database_edition,
             region=region
         )
-        term = self._offer_data['terms']['OnDemand'][sku]
+        offer = self._offer_data[sku]
+        term = offer['terms']['OnDemand']
         price_dimensions = next(six.itervalues(term))['priceDimensions']
         price_dimension = next(six.itervalues(price_dimensions))
         raw_price = price_dimension['pricePerUnit']['USD']
@@ -517,7 +522,8 @@ class RDSOffer(AWSOffer):
     def _get_reserved_offer_term(self, sku, term_attributes):
         # type: (str, List[str]) -> Dict[str, Any]
         term_attributes_hash = self.hash_attributes(*term_attributes)
-        all_terms = self._offer_data['terms']['Reserved'][sku]
+        offer = self._offer_data[sku]
+        all_terms = offer['terms']['Reserved']
         sku_terms = self._reserved_terms_to_offer_term_code[sku]
         if term_attributes_hash not in sku_terms:
             for term_sku, term in six.iteritems(all_terms):
@@ -552,7 +558,7 @@ class RDSOffer(AWSOffer):
                          lease_contract_length=None,                  # type: Optional[str]
                          offering_class=RDS_OFFERING_CLASS.STANDARD,  # type: str
                          purchase_option=None,                        # type: Optional[str]
-                         database_edition=None,                        # type: Optional[str]
+                         database_edition=None,                       # type: Optional[str]
                          region=None,                                 # type: Optional[str]
                          ):
         # type: (...) -> float

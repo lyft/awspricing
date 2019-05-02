@@ -26,6 +26,7 @@ setup(
     install_requires=[
         'requests>=2.5.0,<3.0.0',    # License: Apache2
         'six>=1.0.0,<2.0.0',         # License: MIT
+        'boto3>=1.9.130'
     ],
     extras_require={':python_version=="2.7"': ['typing>=3.5.0.0,<3.6.0.0']},
     license="apache2",

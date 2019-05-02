@@ -2,11 +2,15 @@
 awspricing
 ==========
 
-A Python library for working with the `AWS Price List API <http://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/price-changes.html>`_.
+A Python library for working with the `AWS Price List Query API <https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/pricing.html>`_.
+
+As of version 2.0.0, `awspricing` uses boto3 Price List Query API.
+This requires Price List Query API IAM roles: https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/billing-permissions-ref.html#example-policy-pe-api
+
+Versions before 2.0.0 utilized AWS Price Offer files.
 
 Features:
 
-* Simple boto3-like interface
 * Service-specific helpers (only EC2 and RDS thus far)
 * Local caching support
 

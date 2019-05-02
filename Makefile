@@ -7,4 +7,4 @@ test_lint:
 	flake8
 
 test_mypy:
-	mypy --py2 awspricing
+	mypy --py2 --ignore-missing-imports awspricing
