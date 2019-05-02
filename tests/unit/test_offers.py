@@ -72,7 +72,7 @@ class TestAWSOffer(object):
         offer._offer_data = copy.deepcopy(offer.raw)
 
         # Add an identical product (in terms of attributes) with a different SKU
-        collision_product = copy.deepcopy(offer.raw.values()[0])
+        collision_product = copy.deepcopy(list(offer.raw.values())[0])
         collision_product['product']['sku'] = collision_sku
         offer.raw[collision_sku] = collision_product
 
