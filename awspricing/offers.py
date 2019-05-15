@@ -7,6 +7,7 @@ import six
 
 from .constants import (
     REGION_SHORTS,
+    VOLUME_TYPE_SHORTS,
     EC2_LEASE_CONTRACT_LENGTH,
     EC2_OFFERING_CLASS,
     EC2_PURCHASE_OPTION,
@@ -161,6 +162,12 @@ class EC2Offer(AWSOffer):
             # size is 'metal').
             product_families=['Compute Instance', 'Compute Instance (bare metal)']
         )
+
+        self._reverse_sku_ebs = self._generate_reverse_sku_mapping(
+            'volumeType', 'location', product_families=['Storage'])
+
+        self._reverse_sku_ebs_iops = self._generate_reverse_sku_mapping(
+            'location', 'group', product_families=['System Operation'])
 
         # Lazily-loaded cache to hold offerTermCodes within a SKU
         self._reserved_terms_to_offer_term_code = defaultdict(dict)
@@ -385,6 +392,75 @@ class EC2Offer(AWSOffer):
                 offering_class == 'convertible'):
             raise ValueError("The convertible offering class is not available "
                              "on a 1year lease.")
+
+    def get_sku_ebs(
+            self,
+            volume_type,  # type: str
+            region=None  # type: Optional[str]
+    ):
+        region = self._normalize_region(region)
+        volume_type = self._normalize_volume_type(volume_type)
+
+        attributes = [volume_type, region]
+        if not all(attributes):
+            raise ValueError(
+                "All attributes are required: {}".format(attributes))
+
+        sku = self._reverse_sku_ebs.get(self.hash_attributes(*attributes))
+        if sku is None:
+            raise ValueError(
+                "Unable to lookup SKU for attributes: {}".format(attributes))
+        return sku
+
+    def ebs_volume(
+            self,
+            volume_type,  # type: str
+            region=None  # type: Optional[str]
+    ):
+        # type: (...) -> float
+        sku = self.get_sku_ebs(volume_type, region=region)
+        offer = self._offer_data[sku]
+        term = offer['terms']['OnDemand']
+        price_dimensions = next(six.itervalues(term))['priceDimensions']
+        price_dimension = next(six.itervalues(price_dimensions))
+        raw_price = price_dimension['pricePerUnit']['USD']
+        return float(raw_price)
+
+    def get_sku_ebs_iops(
+            self,
+            group='EBS IOPS',
+            region=None  # type: Optional[str]
+    ):
+        region = self._normalize_region(region)
+
+        attributes = [region, group]
+        if not all(attributes):
+            raise ValueError(
+                "All attributes are required: {}".format(attributes))
+
+        sku = self._reverse_sku_ebs_iops.get(self.hash_attributes(*attributes))
+        if sku is None:
+            raise ValueError(
+                "Unable to lookup SKU for attributes: {}".format(attributes))
+        return sku
+
+    def ebs_iops(self, region=None):
+        sku = self.get_sku_ebs_iops(region=region, group='EBS IOPS')
+        offer = self._offer_data[sku]
+        term = offer['terms']['OnDemand']
+        price_dimensions = next(six.itervalues(term))['priceDimensions']
+        price_dimension = next(six.itervalues(price_dimensions))
+        raw_price = price_dimension['pricePerUnit']['USD']
+        return float(raw_price)
+
+    def _normalize_volume_type(self,
+                               volume_type):  # type: (Optional[str]) -> str
+        if not volume_type:
+            raise ValueError("No volume_type is set.")
+
+        if volume_type in VOLUME_TYPE_SHORTS:  # Use long-name to match pricing API
+            volume_type = VOLUME_TYPE_SHORTS[volume_type]
+        return volume_type
 
 
 @implements('AmazonRDS')
