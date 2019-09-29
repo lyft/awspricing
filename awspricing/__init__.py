@@ -7,7 +7,7 @@ from .offers import AWSOffer, get_offer_class  # noqa
 from .cache import maybe_read_from_cache, maybe_write_to_cache
 
 
-__version__ = "2.0.0"
+__version__ = "2.0.1"
 
 _SERVICES = {}  # type: Dict[str, Type[AWSOffer]]
 service_list = []  # type: List[str]
