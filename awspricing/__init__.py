@@ -60,8 +60,11 @@ def _fetch_offer(offer_name, version=None):
 
 
 def all_services_names():
-    resp = client.describe_services()
-    services = [x['ServiceCode'] for x in resp['Services']]
+    paginator = client.get_paginator('describe_services')
+    resp_pages = paginator.paginate()
+    services = []
+    for page in resp_pages:
+        services.extend([x['ServiceCode'] for x in page['Services']])
     return services
 
 
