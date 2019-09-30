@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.0.1
+ * Use a paginator to retrieve service list from AWS API and fetch all AWS services
+
 ## 2.0.0
 
  * Migrate to use AWS Price List query API instead of offer files
