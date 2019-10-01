@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.0.2
+ * Add skips to travis.yml for pypi deployment
+
 ## 2.0.1
  * Use a paginator to retrieve service list from AWS API and fetch all AWS services
 
