@@ -19,6 +19,7 @@ setup(
     version=get_version(),
     description='An SDK for AWS Pricing',
     long_description=open('README.rst').read(),
+    long_description_content_type="text/markdown",
     author='Garrett Heel',
     author_email='capacity@lyft.com',
     url='https://github.com/lyft/awspricing',
