@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.0.3
+ * Add long_description_content_type to setup.py for pypi deployment
+
 ## 2.0.2
  * Add skips to travis.yml for pypi deployment
 
