@@ -12,6 +12,8 @@ script:
 - make test
 - if [[ $TRAVIS_PYTHON_VERSION == '3.6' ]]; then make test_mypy; fi
 deploy:
+  skip_cleanup: true
+  skip_existing: true
   provider: pypi
   user: lyftpypi
   password:
