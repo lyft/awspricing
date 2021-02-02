@@ -40,13 +40,16 @@ def _fetch_offer(offer_name, version=None, filters=None):
         raise ValueError('Unknown offer name, no corresponding AWS Service: {}'.format(offer_name))
     if not version:
         version = datetime.datetime.utcnow().strftime(TIME_FORMAT)
-
     cache_key = 'offer_{}_{}'.format(offer_name, version)
+    if filters is None:
+        filters = []
+    else:
+        # unwrap filters to include in cache key
+        fkey = '-'.join([':'.join([f'{v}' for k, v in f.items() if k != 'Type']) for f in filters])
+        cache_key = '{}_{}'.format(cache_key, fkey)
     offer = maybe_read_from_cache(cache_key)
     if offer is not None:
         return offer
-    if filters is None:
-        filters = []
     paginator = client.get_paginator('get_products')
     resp_pages = paginator.paginate(ServiceCode=offer_name, FormatVersion='aws_v1', Filters=filters)
     offer = {}
