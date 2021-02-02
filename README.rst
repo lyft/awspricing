@@ -77,6 +77,17 @@ Usage
     rds_offer_old = awspricing.offer('AmazonRDS', version='some_other_version')
 
 
+.. code-block:: python
+
+    import awspricing
+
+    # For limiting EC2 price list based on specific attributes
+    ec2_offer_c5xlarge = awspricing.offer('AmazonEC2', filters=[{"Type":"TERM_MATCH","Field":"instanceType","Value":"c5.xlarge"}])
+
+    # For limiting RDS price list based on specific attributes
+    rds_offer_mysql = awspricing.offer('AmazonRDS', filters=[{"Type":"TERM_MATCH","Field":"engine","Value":"mysql"}])
+
+
 .. code-block:: sh
 
     $ # EC2
