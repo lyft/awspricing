@@ -7,7 +7,7 @@ from .offers import AWSOffer, get_offer_class  # noqa
 from .cache import maybe_read_from_cache, maybe_write_to_cache
 
 
-__version__ = "2.0.3"
+__version__ = "2.0.4"
 
 _SERVICES = {}  # type: Dict[str, Type[AWSOffer]]
 service_list = []  # type: List[str]
@@ -34,7 +34,7 @@ def _get_services():
     return service_list
 
 
-def _fetch_offer(offer_name, version=None):
+def _fetch_offer(offer_name, version=None, filters=None):
     services = _get_services()
     if offer_name not in services:
         raise ValueError('Unknown offer name, no corresponding AWS Service: {}'.format(offer_name))
@@ -45,9 +45,10 @@ def _fetch_offer(offer_name, version=None):
     offer = maybe_read_from_cache(cache_key)
     if offer is not None:
         return offer
-
+    if filters is None:
+        filters = []
     paginator = client.get_paginator('get_products')
-    resp_pages = paginator.paginate(ServiceCode=offer_name, FormatVersion='aws_v1')
+    resp_pages = paginator.paginate(ServiceCode=offer_name, FormatVersion='aws_v1', Filters=filters)
     offer = {}
     for page in resp_pages:
         for product in page['PriceList']:
@@ -68,8 +69,8 @@ def all_services_names():
     return services
 
 
-def offer(service_name, version=None):
+def offer(service_name, version=None, filters=None):
     if service_name not in _SERVICES:
-        offer_data = _fetch_offer(service_name, version=version)
+        offer_data = _fetch_offer(service_name, version=version, filters=filters)
         _SERVICES[service_name] = get_offer_class(service_name)(offer_data)
     return _SERVICES[service_name]
